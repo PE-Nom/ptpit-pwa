@@ -1,4 +1,5 @@
 import store from '../store.js'
+import pendingRequestManager from './pendingRequestManager.js'
 import redmine from './redmine.js'
 import util from './util.js'
 
@@ -21,6 +22,7 @@ export default {
     redmine.configure(user)
     if (store.getters.connectStat) {
       try {
+        // pendingRequestManager.clear()
         await this.retrievePojects()
         await this.retrieveCustomFields()
         await this.retrieveIssues()
@@ -198,19 +200,20 @@ export default {
   // ------------------
   retrieveIssues: async function () {
     try {
-      // Issues List
-      const iss = []
-      this.issues = []
-      if (redmine.isConfigured()) {
-        await redmine.issues(res => {
-          console.log('==== Issues @ naim ====')
-          res.data.issues.forEach(el => {
-            iss.push(el)
-            // console.log(element)
-            let assignedName = el.assigned_to ? el.assigned_to.name : ''
-            let dueRatio = el.done_ratio ? el.done_ratio : '0'
-            let dueDate = el.due_date ? el.due_date : '未定義'
-            let rec = '{' +
+      if (store.getters.connectStat) {
+        // Issues List
+        const iss = []
+        this.issues = []
+        if (redmine.isConfigured()) {
+          await redmine.issues(res => {
+            console.log('==== Issues @ naim ====')
+            res.data.issues.forEach(el => {
+              iss.push(el)
+              // console.log(element)
+              let assignedName = el.assigned_to ? el.assigned_to.name : ''
+              let dueRatio = el.done_ratio ? el.done_ratio : '0'
+              let dueDate = el.due_date ? el.due_date : '未定義'
+              let rec = '{' +
               ' "' + util.columns[0] + '" : "#' + el.id + '"' +
               ',"' + util.columns[1] + '" : "' + el.tracker.name + '"' +
               ',"' + util.columns[2] + '" : "' + el.project.name + '"' +
@@ -224,14 +227,15 @@ export default {
               ',"' + util.columns[10] + '" : "' + dueDate + '"' +
               ',"' + util.columns[11] + '" : "' + el.updated_on + '"' +
             '}'
-            let obj = JSON.parse(rec)
-            this.issues.push(obj)
+              let obj = JSON.parse(rec)
+              this.issues.push(obj)
+            })
           })
-        })
+        }
+        localStorage.removeItem('issues')
+        localStorage.setItem('issues', JSON.stringify(this.issues))
+        console.log(this.issues)
       }
-      localStorage.removeItem('issues')
-      localStorage.setItem('issues', JSON.stringify(this.issues))
-      console.log(this.issues)
     } catch (err) {
       alert(err)
       throw err
@@ -281,23 +285,45 @@ export default {
 
   createIssue: async function (qstr) {
     try {
-      let ret = await redmine.createIssue(qstr, res => {
-        console.log('==== Create Issue @ naim ====')
-        console.log(res)
-      })
-      return ret
+      if (store.getters.connectStat) {
+        let ret = await redmine.createIssue(qstr, res => {
+          console.log('==== Create Issue @ naim ====')
+          console.log(res)
+        })
+        return ret
+      } else {
+        // オフラインの実験
+        let pendingRequest = {
+          request: 'create',
+          id: '-1',
+          query: qstr
+        }
+        pendingRequestManager.push(pendingRequest)
+      }
     } catch (err) {
       throw err
     }
   },
   updateIssue: async function (issId, qstr) {
     try {
-      // console.log('updateIssue @ naim : ' + issId)
-      // console.log(qstr)
-      await redmine.updateIssue(issId, qstr, res => {
-        console.log('==== Update Issue @ naim ====')
-        console.log(res)
-      })
+      if (store.getters.connectStat) {
+        // console.log('updateIssue @ naim : ' + issId)
+        // console.log(qstr)
+        await redmine.updateIssue(issId, qstr, res => {
+          console.log('==== Update Issue @ naim ====')
+          console.log(res)
+        })
+      } else {
+        let pendingRequest = {
+          request: 'update',
+          id: issId,
+          query: qstr
+        }
+        pendingRequestManager.push(pendingRequest)
+        // let req = pendingRequestManager.shift()
+        // console.log('==== pendingRequestManager.pop() ====')
+        // console.log(req)
+      }
     } catch (err) {
       throw err
     }

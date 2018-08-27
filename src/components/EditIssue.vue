@@ -395,6 +395,7 @@ export default {
     createIssue: async function () {
       console.log('createIssue')
       let qstr = this.createQueryString()
+      console.log(qstr)
       let ret = await naim.createIssue(JSON.stringify(qstr))
       await naim.retrieveIssues()
       console.log(qstr)

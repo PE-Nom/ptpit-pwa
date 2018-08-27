@@ -154,6 +154,8 @@ export default {
     },
     createIssue: function () {
       console.log('createIssue')
+      editstate.currentIssueId = -1
+      this.$router.push('/editissue')
     }
   },
   beforeCreate () {

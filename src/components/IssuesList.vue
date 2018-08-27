@@ -12,7 +12,7 @@
           <img :src="icon_new_issue" class="new_issue" width='30px' height='30px' @click="createIssue"/>
         </b-col>
         <b-col cols="1">
-          <img :src="icon_refresh_issue" v-if="$store.getters.connectStat" class="refresh_issue" width='25px' height='25px' @click="refreshIssue"/>
+          <img :src="icon_refresh_issue" v-if="connected" class="refresh_issue" width='25px' height='25px' @click="refreshIssue"/>
         </b-col>
         <b-col cols="12">
         </b-col>
@@ -28,7 +28,7 @@
     <div class="tablet">
       <b-container class="table-row header">
         <b-row>
-          <label class="currentpath-user" >指摘一覧 {{$store.getters.connectStat}}</label>
+          <label class="currentpath-user" >指摘一覧 {{connected}}</label>
         </b-row>
         <b-row>
           <b-col cols="4">
@@ -52,7 +52,7 @@
             <img :src="icon_new_issue" class="new_issue" width='30px' height='30px' @click="createIssue"/>
           </b-col>
           <b-col cols="2">
-            <img :src="icon_refresh_issue" v-if="$store.getters.connectStat" class="refresh_issue" width='25px' height='25px' @click="refreshIssue"/>
+            <img :src="icon_refresh_issue" v-if="connected" class="refresh_issue" width='25px' height='25px' @click="refreshIssue"/>
           </b-col>
         </b-row>
       </b-container>
@@ -77,6 +77,8 @@
 
 <script>
 import naim from '../models/naim.js'
+import util from '../models/util.js'
+import editstate from '../models/editState.js'
 import iconNew from '../assets/new.png'
 import iconRefresh from '../assets/refresh.png'
 
@@ -84,8 +86,7 @@ export default {
 //  name: 'TicketList',
   data () {
     let sortOrders = {}
-    let columns = ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日']
-    columns.forEach(function (key) {
+    util.columns.forEach(function (key) {
       sortOrders[key] = 1
     })
 
@@ -93,7 +94,7 @@ export default {
       userName: '',
       icon_new_issue: iconNew,
       icon_refresh_issue: iconRefresh,
-      columns: columns,
+      columns: util.columns,
       searchQuery: '',
       sortKey: 'キー',
       sortOrders: sortOrders,
@@ -101,32 +102,11 @@ export default {
     }
   },
   computed: {
+    connected: function () {
+      return this.$store.getters.connectStat
+    },
     issues: function () {
-      // console.log('### issues computes propery in IssuesList.vue ###')
-      let ret = []
-      // let isss = naim.getIssues()
-      let isss = this.isslist
-      isss.forEach(el => {
-        let assignedName = el.assigned_to ? el.assigned_to.name : ''
-        let dueRatio = el.done_ratio ? el.done_ratio : '0'
-        let dueDate = el.due_date ? el.due_date : '未定義'
-        let rec = '{' +
-          ' "' + this.columns[0] + '" : "#' + el.id + '"' +
-          ',"' + this.columns[1] + '" : "' + el.tracker.name + '"' +
-          ',"' + this.columns[2] + '" : "' + el.project.name + '"' +
-          ',"' + this.columns[3] + '" : "' + el.subject + '"' +
-          ',"' + this.columns[4] + '" : "' + el.priority.name + '"' +
-          ',"' + this.columns[5] + '" : "' + el.status.name + '"' +
-          ',"' + this.columns[6] + '" : "' + dueRatio + ' %"' +
-          ',"' + this.columns[7] + '" : "' + el.author.name + '"' +
-          ',"' + this.columns[8] + '" : "' + assignedName + '"' +
-          ',"' + this.columns[9] + '" : "' + el.start_date + '"' +
-          ',"' + this.columns[10] + '" : "' + dueDate + '"' +
-          ',"' + this.columns[11] + '" : "' + el.updated_on + '"' +
-        '}'
-        let obj = JSON.parse(rec)
-        ret.push(obj)
-      })
+      let ret = this.isslist
       let filterKey = this.searchQuery && this.searchQuery.toLowerCase()
       if (filterKey) {
         // console.log('filterData by filterKey changed');
@@ -157,6 +137,15 @@ export default {
     },
     editIssue: function (issue) {
       console.log('editIssue')
+      let issId = issue.id.slice(1)
+      let storageKey = 'issue-' + issId
+      if (!this.connected && !(storageKey in localStorage)) {
+        alert('オフラインモード　詳細情報を取得できません')
+      } else {
+        console.log('editIssue')
+        editstate.currentIssueId = issId
+        this.$router.push('/editissue')
+      }
     },
     refreshIssue: async function () {
       console.log('refreshIssues')

@@ -1,0 +1,1 @@
+xcopy .\dist C:\Bitnami\redmine-3.4.5-0\apache2\htdocs /s/e/i

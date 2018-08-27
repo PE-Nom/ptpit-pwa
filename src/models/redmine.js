@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://192.168.1.4:3001/' // for demo pitarpit dell
-// const BASE_URL = 'http://192.168.10.9:3001' // @home on dell
+// const BASE_URL = 'http://192.168.1.4:3001/' // for demo pitarpit dell
+const BASE_URL = 'http://192.168.10.9:3001' // @home on dell
 
 export default {
   rmc: null,
@@ -153,6 +153,7 @@ export default {
   },
   async attachingFiles (data, callback) {
     console.log('attachingFiles @ redmine.js')
+    console.log(data)
     let ret = null
     await this.rmc.post('/uploads.json', data, {headers: {'Content-Type': 'application/octet-stream'}})
       .then(res => {

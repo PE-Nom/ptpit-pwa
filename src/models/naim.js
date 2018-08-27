@@ -235,6 +235,8 @@ export default {
         localStorage.removeItem('issues')
         localStorage.setItem('issues', JSON.stringify(this.issues))
         console.log(this.issues)
+      } else {
+        this.issues = JSON.parse(localStorage.getItem('issues'))
       }
     } catch (err) {
       alert(err)
@@ -283,10 +285,10 @@ export default {
     return this.issueDetail
   },
 
-  createIssue: async function (qstr) {
+  createIssue: async function (qobj) {
     try {
       if (store.getters.connectStat) {
-        let ret = await redmine.createIssue(qstr, res => {
+        let ret = await redmine.createIssue(qobj, res => {
           console.log('==== Create Issue @ naim ====')
           console.log(res)
         })
@@ -296,7 +298,7 @@ export default {
         let pendingRequest = {
           request: 'create',
           id: '-1',
-          query: qstr
+          query: qobj
         }
         pendingRequestManager.push(pendingRequest)
       }
@@ -304,12 +306,12 @@ export default {
       throw err
     }
   },
-  updateIssue: async function (issId, qstr) {
+  updateIssue: async function (issId, qobj) {
     try {
       if (store.getters.connectStat) {
         // console.log('updateIssue @ naim : ' + issId)
         // console.log(qstr)
-        await redmine.updateIssue(issId, qstr, res => {
+        await redmine.updateIssue(issId, qobj, res => {
           console.log('==== Update Issue @ naim ====')
           console.log(res)
         })
@@ -317,7 +319,7 @@ export default {
         let pendingRequest = {
           request: 'update',
           id: issId,
-          query: qstr
+          query: qobj
         }
         pendingRequestManager.push(pendingRequest)
         // let req = pendingRequestManager.shift()
@@ -369,14 +371,30 @@ export default {
     this.issues = []
   },
 
-  uploadFiles: async function (data) {
-    console.log(data)
+  uploadFiles: async function (properties, contents) {
+    console.log('uploadFile @ naim')
+    let ret = null
     try {
-      let ret = await redmine.attachingFiles(data, res => {
-        // console.log('==== uploadFiles @ naim ====')
-        // console.log(res)
-      })
-      return ret
+      if (store.getters.connectStat) {
+        console.log(properties)
+        ret = await redmine.attachingFiles(properties, res => {
+          // console.log('==== uploadFiles @ naim ====')
+          // console.log(res)
+        })
+        return ret
+      } else {
+        console.log(contents)
+        let pendingRequest = {
+          request: 'uploadFiles',
+          name: properties.name,
+          type: properties.type,
+          size: properties.size,
+          lastModified: properties.lastModified,
+          query: contents
+        }
+        pendingRequestManager.push(pendingRequest)
+        return ret
+      }
     } catch (err) {
       throw err
     }

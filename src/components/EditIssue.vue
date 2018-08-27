@@ -213,7 +213,8 @@ export default {
   },
   data () {
     return {
-      test_url: 'http://192.168.1.4/JS/data/', // @ office
+      test_url: 'http://192.168.10.9/JS/data/', // @ home on dell
+      // test_url: 'http://192.168.1.4/JS/data/', // @ office
 
       new: false,
       currentPath: '',
@@ -272,9 +273,9 @@ export default {
       currentDate: '2018-07-25',
       minDate: '2018-01-01',
       maxDate: '2030-12-31',
-      mediaData: null,
+      fileProp: null,
       token: '',
-      image: null,
+      fileContents: null,
       uploading: false,
       imageDescription: ''
     }
@@ -321,13 +322,16 @@ export default {
       console.log('onImageAndVideoChanged')
       if (event.target.files.length) {
         // 選択されたファイル情報を取得
-        this.mediaData = event.target.files[0]
-        this.image = new Image()
+        this.fileProp = event.target.files[0]
+        console.log(this.fileProp)
+        this.fileContents = new Image()
         let reader = new FileReader()
         reader.onload = (e) => {
-          this.image = e.target.result
+          console.log('reader.onload')
+          this.fileContents = e.target.result
+          console.log(this.fileContents)
         }
-        reader.readAsDataURL(this.mediaData)
+        reader.readAsDataURL(this.fileProp)
       } else {
         console.log('no file selected')
       }
@@ -337,26 +341,28 @@ export default {
         this.errorMessage = 'Now uploading'
       } else {
         this.uploading = true
-        if (this.mediaData) {
+        if (this.fileProp) {
           try {
-            let res = await naim.uploadFiles(this.mediaData)
-            this.token = res.data.upload.token
-            let attachId = res.data.upload.id
-            console.log('uploaded file')
-            console.log('token : ' + this.token)
-            console.log('id : ' + attachId)
-            let qstr = {
-              'issue': {
-                'uploads': [{
-                  'token': this.token,
-                  'filename': this.mediaData.name,
-                  'description': this.imageDescription,
-                  'content_type': this.mediaData.type
-                }]
+            let res = await naim.uploadFiles(this.fileProp, this.fileContents)
+            if (res) {
+              this.token = res.data.upload.token
+              let attachId = res.data.upload.id
+              console.log('uploaded file')
+              console.log('token : ' + this.token)
+              console.log('id : ' + attachId)
+              let qstr = {
+                'issue': {
+                  'uploads': [{
+                    'token': this.token,
+                    'filename': this.fileProp.name,
+                    'description': this.imageDescription,
+                    'content_type': this.fileProp.type
+                  }]
+                }
               }
+              await naim.updateIssue(editstate.currentIssueId, JSON.stringify(qstr))
+              await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.fileProp, this.fileContents)
             }
-            await naim.updateIssue(editstate.currentIssueId, JSON.stringify(qstr))
-            await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.mediaData, this.image)
             this.uploading = false
           } catch (err) {
             console.log('error has occured @ attachingFile')
@@ -367,7 +373,7 @@ export default {
       }
     },
     createQueryString: function () {
-      let qstr = {
+      let qobj = {
         'issue': {
           'subject': this.subject, // subject
           'priority_id': this.issuePriority, // priority Object
@@ -390,16 +396,16 @@ export default {
           'custom_fields': [{ id: naim.findCustomFieldId('巡視場所'), 'value': this.site }]
         }
       }
-      return qstr
+      return qobj
     },
     createIssue: async function () {
       console.log('createIssue')
-      let qstr = this.createQueryString()
-      console.log(qstr)
-      let ret = await naim.createIssue(JSON.stringify(qstr))
+      let qobj = this.createQueryString()
+      console.log(qobj)
+      let ret = await naim.createIssue(JSON.stringify(qobj))
       await naim.retrieveIssues()
-      console.log(qstr)
-      if (this.image !== null) {
+      console.log(qobj)
+      if (this.fileContents !== null) {
         editstate.currentIssueId = ret.data.issue.id
         await this.uploadFiles()
       }
@@ -407,11 +413,11 @@ export default {
     },
     updateIssue: async function () {
       console.log('updateIssue')
-      let qstr = this.createQueryString()
-      await naim.updateIssue(this.issId, JSON.stringify(qstr))
+      let qobj = this.createQueryString()
+      await naim.updateIssue(this.issId, JSON.stringify(qobj))
       await naim.retrieveIssues()
-      console.log(qstr)
-      if (this.image !== null) {
+      console.log(qobj)
+      if (this.fileContents !== null) {
         await this.uploadFiles()
       }
       router.push('/tickets')

@@ -28,7 +28,7 @@
     <div class="tablet">
       <b-container class="table-row header">
         <b-row>
-          <label class="currentpath-user" >指摘一覧 {{connected}}</label>
+          <label class="currentpath-user" >指摘一覧 ({{connectStatus}})</label>
         </b-row>
         <b-row>
           <b-col cols="4">
@@ -98,11 +98,17 @@ export default {
       searchQuery: '',
       sortKey: 'キー',
       sortOrders: sortOrders,
-      isslist: []
+      isslist: [],
+      connectStatus: ''
     }
   },
   computed: {
     connected: function () {
+      if (this.$store.getters.connectStat) {
+        this.connectStatus = 'on-line'
+      } else {
+        this.connectStatus = 'off-line'
+      }
       return this.$store.getters.connectStat
     },
     issues: function () {

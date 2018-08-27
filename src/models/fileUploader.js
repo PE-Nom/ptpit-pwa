@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://192.168.1.4:8081' // @ Office
-// const BASE_URL = 'https://192.168.10.9:8081' // @ Office
+// const BASE_URL = 'http://192.168.1.4:8081' // @ Office
+const BASE_URL = 'http://192.168.10.9:8081' // @ home
 
 export default {
   async uploadFile (issId, attachId, file, data, callback) {

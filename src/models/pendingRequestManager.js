@@ -16,7 +16,6 @@ export default {
       if (db.objectStoreNames.contains(objectStoreName)) {
         db.deleteObjectStore(objectStoreName)
       }
-      // 改めてつくる
       // var store = db.createObjectStore(objectStoreName, {keyPath: 'timeStamp'})
       db.createObjectStore(objectStoreName, {autoIncrement: true})
     }
@@ -46,18 +45,53 @@ export default {
     sessionStorage.setItem(keyName, JSON.stringify(request))
     */
 
-    let transaction = db.transaction(objectStoreName, 'readwrite')
-    console.log(transaction)
-    transaction.onerror = function (e) {
+    let tx = db.transaction(objectStoreName, 'readwrite')
+    console.log(tx)
+    tx.onerror = function (e) {
       console.log('transaction error')
       console.log(e)
     }
-    transaction.onsuccess = function (e) {
+    tx.onsuccess = function (e) {
       console.log('transaction success')
       console.log(e)
     }
-    let objStore = transaction.objectStore(objectStoreName)
+    let objStore = tx.objectStore(objectStoreName)
     objStore.add(req)
+  },
+  getPendingRequests (cb) {
+    console.log('PendingRequestsManager.getPendingRequests')
+    let objStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName)
+    let range = IDBKeyRange.lowerBound(0)
+    let cur = objStore.openCursor(range)
+    let requests = []
+    cur.onsuccess = function (e) {
+      console.log(e)
+      let cursor = e.target.result
+      if (!!cursor === false) {
+        cb(requests)
+        return
+      }
+      let rec = {
+        key: cursor.key,
+        value: cursor.value
+      }
+      console.log(rec)
+      requests.push(rec)
+      cursor.continue()
+    }
+    cur.onerror = function (e) {
+      console.log(e)
+    }
+  },
+  deletePendingRequest (key, cb) {
+    console.log('PendingRequestsManager.deletePendingRequests')
+    console.log('key is ' + key)
+    var request = db.transaction(objectStoreName, 'readwrite')
+      .objectStore(objectStoreName)
+      .delete(key)
+    request.onsuccess = function (event) {
+      cb(event)
+    }
   },
   shift () {
     let req = null

@@ -10,6 +10,7 @@
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
           <b-nav-item to="/tickets">指摘一覧</b-nav-item>
+          <b-nav-item to="/pendingrequests">未登録の指摘一覧</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -43,7 +44,8 @@ export default {
     showNavbar: function () {
       let show = true
       if (this.$route.path !== '/' &&
-          this.$route.path !== '/tickets') {
+          this.$route.path !== '/tickets' &&
+          this.$route.path !== '/pendingrequests') {
         show = false
       }
       return show

@@ -65,7 +65,7 @@ export default {
     let cur = objStore.openCursor(range)
     let requests = []
     cur.onsuccess = function (e) {
-      console.log(e)
+      // console.log(e)
       let cursor = e.target.result
       if (!!cursor === false) {
         cb(requests)

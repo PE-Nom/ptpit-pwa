@@ -343,7 +343,7 @@ export default {
         this.uploading = true
         if (this.fileProp) {
           try {
-            let res = await naim.uploadFiles(this.fileProp)
+            let res = await naim.uploadFiles(this.fileProp, this.imageDescription)
             if (res) {
               this.token = res.data.upload.token
               let attachId = res.data.upload.id
@@ -409,7 +409,11 @@ export default {
         editstate.currentIssueId = ret.data.issue.id
         await this.uploadFiles()
       }
-      router.push('/tickets')
+      if (this.$store.getters.connectStat) {
+        router.push('/tickets')
+      } else {
+        router.push('/pendingrequests')
+      }
     },
     updateIssue: async function () {
       console.log('updateIssue')
@@ -420,7 +424,11 @@ export default {
       if (this.fileContents !== null) {
         await this.uploadFiles()
       }
-      router.push('/tickets')
+      if (this.$store.getters.connectStat) {
+        router.push('/tickets')
+      } else {
+        router.push('/pendingrequests')
+      }
     },
     previewAttachment: function (file) {
       console.log('select attachment :')

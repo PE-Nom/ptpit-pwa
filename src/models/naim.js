@@ -1,6 +1,7 @@
 import store from '../store.js'
 import pendingRequestManager from './pendingRequestManager.js'
 import redmine from './redmine.js'
+import editstate from './editState.js'
 import util from './util.js'
 
 export default {
@@ -301,6 +302,14 @@ export default {
           query: qobj
         }
         pendingRequestManager.push(pendingRequest)
+        let ret = {
+          data: {
+            issue: {
+              id: -1
+            }
+          }
+        }
+        return ret
       }
     } catch (err) {
       throw err
@@ -371,7 +380,7 @@ export default {
     this.issues = []
   },
 
-  uploadFiles: async function (properties) {
+  uploadFiles: async function (properties, imageDescription) {
     console.log('uploadFile @ naim')
     let ret = null
     try {
@@ -383,7 +392,13 @@ export default {
         })
         return ret
       } else {
-        pendingRequestManager.push(properties)
+        let pendingRequest = {
+          request: 'file attach',
+          id: editstate.currentIssueId,
+          description: imageDescription,
+          properties: properties
+        }
+        pendingRequestManager.push(pendingRequest)
         return ret
       }
     } catch (err) {

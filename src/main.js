@@ -7,9 +7,12 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import store from './store.js'
+import pendingRequestManager from './models/pendingRequestManager.js'
 
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
+
+pendingRequestManager.init()
 
 /* eslint-disable no-new */
 new Vue({

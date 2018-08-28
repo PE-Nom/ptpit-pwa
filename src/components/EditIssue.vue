@@ -343,14 +343,14 @@ export default {
         this.uploading = true
         if (this.fileProp) {
           try {
-            let res = await naim.uploadFiles(this.fileProp, this.fileContents)
+            let res = await naim.uploadFiles(this.fileProp)
             if (res) {
               this.token = res.data.upload.token
               let attachId = res.data.upload.id
               console.log('uploaded file')
               console.log('token : ' + this.token)
               console.log('id : ' + attachId)
-              let qstr = {
+              let qobj = {
                 'issue': {
                   'uploads': [{
                     'token': this.token,
@@ -360,7 +360,7 @@ export default {
                   }]
                 }
               }
-              await naim.updateIssue(editstate.currentIssueId, JSON.stringify(qstr))
+              await naim.updateIssue(editstate.currentIssueId, qobj)
               await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.fileProp, this.fileContents)
             }
             this.uploading = false
@@ -402,7 +402,7 @@ export default {
       console.log('createIssue')
       let qobj = this.createQueryString()
       console.log(qobj)
-      let ret = await naim.createIssue(JSON.stringify(qobj))
+      let ret = await naim.createIssue(qobj)
       await naim.retrieveIssues()
       console.log(qobj)
       if (this.fileContents !== null) {
@@ -414,7 +414,7 @@ export default {
     updateIssue: async function () {
       console.log('updateIssue')
       let qobj = this.createQueryString()
-      await naim.updateIssue(this.issId, JSON.stringify(qobj))
+      await naim.updateIssue(this.issId, qobj)
       await naim.retrieveIssues()
       console.log(qobj)
       if (this.fileContents !== null) {

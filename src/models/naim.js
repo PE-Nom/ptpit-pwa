@@ -22,7 +22,7 @@ export default {
     redmine.configure(user)
     if (store.getters.connectStat) {
       try {
-        // pendingRequestManager.clear()
+        pendingRequestManager.clear()
         await this.retrievePojects()
         await this.retrieveCustomFields()
         await this.retrieveIssues()
@@ -288,7 +288,7 @@ export default {
   createIssue: async function (qobj) {
     try {
       if (store.getters.connectStat) {
-        let ret = await redmine.createIssue(qobj, res => {
+        let ret = await redmine.createIssue(JSON.stringify(qobj), res => {
           console.log('==== Create Issue @ naim ====')
           console.log(res)
         })
@@ -311,7 +311,7 @@ export default {
       if (store.getters.connectStat) {
         // console.log('updateIssue @ naim : ' + issId)
         // console.log(qstr)
-        await redmine.updateIssue(issId, qobj, res => {
+        await redmine.updateIssue(issId, JSON.stringify(qobj), res => {
           console.log('==== Update Issue @ naim ====')
           console.log(res)
         })
@@ -371,7 +371,7 @@ export default {
     this.issues = []
   },
 
-  uploadFiles: async function (properties, contents) {
+  uploadFiles: async function (properties) {
     console.log('uploadFile @ naim')
     let ret = null
     try {
@@ -383,16 +383,7 @@ export default {
         })
         return ret
       } else {
-        console.log(contents)
-        let pendingRequest = {
-          request: 'uploadFiles',
-          name: properties.name,
-          type: properties.type,
-          size: properties.size,
-          lastModified: properties.lastModified,
-          query: contents
-        }
-        pendingRequestManager.push(pendingRequest)
+        pendingRequestManager.push(properties)
         return ret
       }
     } catch (err) {

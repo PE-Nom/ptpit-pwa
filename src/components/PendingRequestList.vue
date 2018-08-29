@@ -106,7 +106,7 @@ export default {
             key: element.key,
             id: element.value.id,
             request: element.value.request,
-            subject: element.value.properties.name,
+            subject: element.value.name,
             description: element.value.description
           }
         } else {
@@ -137,9 +137,26 @@ export default {
         prm.deletePendingRequest(this.selectRequestKey, this.retrievePendingRequests)
       }
     },
+    // 引数はbase64形式の文字列と作成するファイルオブジェクトのファイル名
+    createFile (request) {
+      let mediaData = request.value.mediaData
+      let name = request.value.name
+      let filePropertyBag = request.value.filePropertyBag
+      // base64のデコード
+      let bin = atob(mediaData.replace(/^.*,/, ''))
+      // バイナリデータ化
+      let buffer = new Uint8Array(bin.length)
+      for (let i = 0; i < bin.length; i++) {
+        buffer[i] = bin.charCodeAt(i)
+      }
+      // ファイルオブジェクト生成(この例ではjpegファイル)
+      return new File([buffer.buffer], name, filePropertyBag)
+    },
     async uploadFile (id, request) {
       try {
-        let res = await naim.uploadFile(request.value.properties, request.value.description)
+        // ここでFileオブジェクトを再構築してproperties にセットする。
+        let file = this.createFile(request)
+        let res = await naim.uploadFile(file, request.value.mediaData, request.value.description)
         if (res) {
           let token = res.data.upload.token
           let attachId = res.data.upload.id
@@ -150,14 +167,14 @@ export default {
             'issue': {
               'uploads': [{
                 'token': token,
-                'filename': request.value.properties.name,
+                'filename': request.value.name,
                 'description': request.value.description,
-                'content_type': request.value.properties.type
+                'content_type': request.value.file_property_bag.type
               }]
             }
           }
           await naim.updateIssue(id, qobj)
-          await fileUploader.uploadFile(id, attachId, request.value.properties)
+          await fileUploader.uploadFile(id, attachId, file)
         }
       } catch (err) {
         console.log('error has occured @ attachingFile')

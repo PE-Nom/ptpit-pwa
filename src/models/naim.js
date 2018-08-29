@@ -380,13 +380,13 @@ export default {
     this.issues = []
   },
 
-  uploadFile: async function (properties, imageDescription) {
+  uploadFile: async function (file, mediaData, imageDescription) {
     console.log('uploadFile @ naim')
     let ret = null
     try {
       if (store.getters.connectStat) {
-        console.log(properties)
-        ret = await redmine.attachingFiles(properties, res => {
+        console.log(file)
+        ret = await redmine.attachingFiles(file, res => {
           // console.log('==== uploadFiles @ naim ====')
           // console.log(res)
         })
@@ -396,7 +396,12 @@ export default {
           request: 'file attach',
           id: editstate.currentIssueId,
           description: imageDescription,
-          properties: properties
+          mediaData: mediaData,
+          name: file.name,
+          file_property_bag: {
+            type: file.type,
+            lastModified: file.lastModified
+          }
         }
         pendingRequestManager.push(pendingRequest)
         return ret

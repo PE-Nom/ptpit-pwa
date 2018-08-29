@@ -273,9 +273,9 @@ export default {
       currentDate: '2018-07-25',
       minDate: '2018-01-01',
       maxDate: '2030-12-31',
-      fileProp: null,
+      file: null,
       token: '',
-      fileContents: null,
+      mediaData: null,
       uploading: false,
       imageDescription: ''
     }
@@ -325,16 +325,16 @@ export default {
       console.log('onImageAndVideoChanged')
       if (event.target.files.length) {
         // 選択されたファイル情報を取得
-        this.fileProp = event.target.files[0]
-        console.log(this.fileProp)
-        this.fileContents = new Image()
+        this.file = event.target.files[0]
+        console.log(this.file)
+        this.mediaData = new Image()
         let reader = new FileReader()
         reader.onload = (e) => {
           console.log('reader.onload')
-          this.fileContents = e.target.result
-          console.log(this.fileContents)
+          this.mediaData = e.target.result
+          console.log(this.mediaData)
         }
-        reader.readAsDataURL(this.fileProp)
+        reader.readAsDataURL(this.file)
       } else {
         console.log('no file selected')
       }
@@ -344,9 +344,9 @@ export default {
         this.errorMessage = 'Now uploading'
       } else {
         this.uploading = true
-        if (this.fileProp) {
+        if (this.file) {
           try {
-            let res = await naim.uploadFile(this.fileProp, this.imageDescription)
+            let res = await naim.uploadFile(this.file, this.mediaData, this.imageDescription)
             if (res) {
               this.token = res.data.upload.token
               let attachId = res.data.upload.id
@@ -357,14 +357,14 @@ export default {
                 'issue': {
                   'uploads': [{
                     'token': this.token,
-                    'filename': this.fileProp.name,
+                    'filename': this.file.name,
                     'description': this.imageDescription,
-                    'content_type': this.fileProp.type
+                    'content_type': this.file.type
                   }]
                 }
               }
               await naim.updateIssue(editstate.currentIssueId, qobj)
-              await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.fileProp, this.fileContents)
+              await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.file, this.mediaData)
             }
             this.uploading = false
           } catch (err) {
@@ -408,7 +408,7 @@ export default {
       let ret = await naim.createIssue(qobj)
       await naim.retrieveIssues()
       console.log(qobj)
-      if (this.fileContents !== null) {
+      if (this.mediaData !== null) {
         editstate.currentIssueId = ret.data.issue.id
         await this.uploadFile()
       }
@@ -424,7 +424,7 @@ export default {
       await naim.updateIssue(this.issId, qobj)
       await naim.retrieveIssues()
       console.log(qobj)
-      if (this.fileContents !== null) {
+      if (this.mediaData !== null) {
         await this.uploadFile()
       }
       if (this.$store.getters.connectStat) {

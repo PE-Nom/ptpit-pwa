@@ -35,12 +35,13 @@ export default {
   push (req) {
     console.log('pendingRequestManager.push')
     console.log(db)
-
     let tx = db.transaction(objectStoreName, 'readwrite')
     console.log(tx)
     tx.onerror = function (e) {
       console.log('transaction error')
       console.log(e)
+      alert('transaction error')
+      alert(e.toString())
     }
     tx.onsuccess = function (e) {
       console.log('transaction success')

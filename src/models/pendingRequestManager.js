@@ -35,15 +35,6 @@ export default {
   push (req) {
     console.log('pendingRequestManager.push')
     console.log(db)
-    /*
-    let request = []
-    if (keyName in sessionStorage) {
-      request = JSON.parse(sessionStorage.getItem(keyName))
-    }
-    request.push(req)
-    sessionStorage.removeItem(keyName)
-    sessionStorage.setItem(keyName, JSON.stringify(request))
-    */
 
     let tx = db.transaction(objectStoreName, 'readwrite')
     console.log(tx)
@@ -90,17 +81,9 @@ export default {
       .objectStore(objectStoreName)
       .delete(key)
     request.onsuccess = function (event) {
-      cb(event)
+      if (cb) {
+        cb(event)
+      }
     }
-  },
-  shift () {
-    let req = null
-    if (keyName in sessionStorage) {
-      let request = JSON.parse(sessionStorage.getItem(keyName))
-      req = request.shift()
-      sessionStorage.removeItem(keyName)
-      sessionStorage.setItem(keyName, JSON.stringify(request))
-    }
-    return req
   }
 }

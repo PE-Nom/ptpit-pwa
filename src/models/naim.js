@@ -380,7 +380,7 @@ export default {
     this.issues = []
   },
 
-  uploadFiles: async function (properties, imageDescription) {
+  uploadFile: async function (properties, imageDescription) {
     console.log('uploadFile @ naim')
     let ret = null
     try {

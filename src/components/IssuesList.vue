@@ -155,8 +155,12 @@ export default {
     },
     refreshIssue: async function () {
       console.log('refreshIssues')
-      await naim.retrieveIssues()
-      this.isslist = naim.getIssues()
+      if (!this.connected) {
+        alert('オフラインモード　更新できません')
+      } else {
+        await naim.retrieveIssues()
+        this.isslist = naim.getIssues()
+      }
     },
     createIssue: function () {
       console.log('createIssue')

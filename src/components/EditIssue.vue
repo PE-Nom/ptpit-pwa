@@ -4,7 +4,7 @@
       <b-navbar-brand to="/tickets">&lt;&lt; 指摘一覧</b-navbar-brand>
     </b-navbar>
     <b-container class="table-row header">
-      <label class="currentpath-user" >{{this.currentPath}}</label>
+      <label class="currentpath-user" >{{currentPath}} ({{connectStatus}})</label>
     </b-container>
 
     <div>
@@ -213,8 +213,8 @@ export default {
   },
   data () {
     return {
-      test_url: 'http://192.168.10.9/JS/data/', // @ home on dell
-      // test_url: 'http://192.168.1.4/JS/data/', // @ office
+      // test_url: 'http://192.168.10.9/JS/data/', // @ home on dell
+      test_url: 'http://192.168.1.4/JS/data/', // @ office
 
       new: false,
       currentPath: '',
@@ -281,6 +281,9 @@ export default {
     }
   },
   computed: {
+    connectStatus: function () {
+      return this.$store.getters.connectStat ? 'on-line' : 'off-line'
+    },
     showNavbar: function () {
       let show = true
       if (this.$route.path !== '/editissue') {
@@ -336,14 +339,14 @@ export default {
         console.log('no file selected')
       }
     },
-    async uploadFiles () {
+    async uploadFile () {
       if (this.uploading) {
         this.errorMessage = 'Now uploading'
       } else {
         this.uploading = true
         if (this.fileProp) {
           try {
-            let res = await naim.uploadFiles(this.fileProp, this.imageDescription)
+            let res = await naim.uploadFile(this.fileProp, this.imageDescription)
             if (res) {
               this.token = res.data.upload.token
               let attachId = res.data.upload.id
@@ -407,7 +410,7 @@ export default {
       console.log(qobj)
       if (this.fileContents !== null) {
         editstate.currentIssueId = ret.data.issue.id
-        await this.uploadFiles()
+        await this.uploadFile()
       }
       if (this.$store.getters.connectStat) {
         router.push('/tickets')
@@ -422,7 +425,7 @@ export default {
       await naim.retrieveIssues()
       console.log(qobj)
       if (this.fileContents !== null) {
-        await this.uploadFiles()
+        await this.uploadFile()
       }
       if (this.$store.getters.connectStat) {
         router.push('/tickets')

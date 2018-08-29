@@ -18,16 +18,26 @@
       <b-container class="table-row header">
         <b-row>
           <b-col cols="4">
-            <label class="currentpath-user" >未登録の指摘一 ({{connectStatus}})</label>
+            <label>未登録の指摘一覧</label>
           </b-col>
           <b-col cols="4">
-            <label class="currentpath-user" >選択リクエスト ({{selectedRequest}})</label>
+            <label>({{connectStatus}})</label>
+          </b-col>
+          <b-col cols="4">
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="6">
+            <label class="currentpath-user" >選択リクエスト ({{selectRequestKey}})</label>
+          </b-col>
+          <b-col cols="2">
+            <img :src="icon_trash" class="trash" width='25px' height='25px' @click="remove"/>
           </b-col>
           <b-col cols="2">
             <img :src="icon_new_issue" class="new_issue" width='30px' height='30px' @click="createIssue"/>
           </b-col>
           <b-col cols="2">
-            <img :src="icon_upload" class="up-load" width='30px' height='30px' @click="upload"/>
+            <img :src="icon_upload" v-if="connected" class="up-load" width='30px' height='30px' @click="upload"/>
           </b-col>
         </b-row>
       </b-container>
@@ -53,8 +63,11 @@
 <script>
 import editstate from '../models/editState.js'
 import prm from '../models/pendingRequestManager.js'
+import naim from '../models/naim.js'
+import fileUploader from '../models/fileUploader.js'
 import iconUpload from '../assets/upload.png'
 import iconNew from '../assets/new.png'
+import iconTrash from '../assets/trash.png'
 
 export default {
   data () {
@@ -63,10 +76,21 @@ export default {
       requestObjs: [],
       requestStrs: [],
       msg: 'Pending Requests',
-      connectStatus: this.$store.getters.connectStat ? 'on-line' : 'off-line',
+      icon_trash: iconTrash,
       icon_new_issue: iconNew,
       icon_upload: iconUpload,
-      selectedRequest: ''
+      selectRequestKey: '',
+      connectStatus: ''
+    }
+  },
+  computed: {
+    connected: function () {
+      if (this.$store.getters.connectStat) {
+        this.connectStatus = 'on-line'
+      } else {
+        this.connectStatus = 'off-line'
+      }
+      return this.$store.getters.connectStat
     }
   },
   methods: {
@@ -105,22 +129,80 @@ export default {
     },
     select (entry) {
       console.log('selected request key is ' + entry.key)
-      this.selectedRequest = entry.key
+      this.selectRequestKey = entry.key
     },
-    upload () {
+    remove () {
+      console.log('remove')
+      if (this.selectRequestKey !== '') {
+        prm.deletePendingRequest(this.selectRequestKey, this.retrievePendingRequests)
+      }
+    },
+    async uploadFile (id, request) {
+      try {
+        let res = await naim.uploadFile(request.value.properties, request.value.description)
+        if (res) {
+          let token = res.data.upload.token
+          let attachId = res.data.upload.id
+          console.log('uploaded file')
+          console.log('token : ' + token)
+          console.log('id : ' + attachId)
+          let qobj = {
+            'issue': {
+              'uploads': [{
+                'token': token,
+                'filename': request.value.properties.name,
+                'description': request.value.description,
+                'content_type': request.value.properties.type
+              }]
+            }
+          }
+          await naim.updateIssue(id, qobj)
+          await fileUploader.uploadFile(id, attachId, request.value.properties)
+        }
+      } catch (err) {
+        console.log('error has occured @ attachingFile')
+        console.log(err)
+        this.errorMessage = err.toString()
+      }
+    },
+    async upload () {
       console.log('upload')
-      this.requestObjs.forEach(request => {
-        // ここでrequestObjsを一件づつ登録していく
-        console.log(request)
-      })
-      if (this.selectedRequest !== '') {
-        prm.deletePendingRequest(this.selectedRequest, this.retrievePendingRequests)
+      // ここでrequestObjsを一件づつ登録していく
+      // this.requestObjs.forEach では
+      // asyn/awaitのコンテキストが不整合になるため
+      // ここではあえてfor ループで実装している
+      if (!this.connected) {
+        alert('オフラインモード　指摘情報をアップロードできません')
+      } else {
+        let id = null
+        for (let i = 0; i < this.requestObjs.length; i++) {
+          let request = this.requestObjs[i]
+          console.log(request)
+          if (request.value.request === 'create') {
+            console.log('upload create request')
+            let ret = null
+            ret = await naim.createIssue(request.value.query)
+            id = ret.data.issue.id
+          } else if (request.value.request === 'update') {
+            console.log('upload update request')
+            id = request.value.id
+            await naim.updateIssue(id, request.value.query)
+          } else if (request.value.request === 'file attach') {
+            console.log('upload attachingFile request')
+            await this.uploadFile(id, request)
+          } else {
+            console.log('unknown request')
+          }
+          prm.deletePendingRequest(request.key)
+        }
+        await naim.retrieveIssues()
+        this.retrievePendingRequests()
       }
     },
     retrievePendingRequests (e) {
       if (e) {
         console.log(e)
-        this.selectedRequest = ''
+        this.selectRequestKey = ''
       }
       prm.getPendingRequests(this.complete)
     }
@@ -186,6 +268,14 @@ export default {
       display: inline;
     }
     .new_issue {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+      -webkit-transform: translateY(-50%) translateX(-50%);
+      /* float: right; */
+    }
+    .trash {
       position: absolute;
       top: 50%;
       left: 50%;

@@ -23,7 +23,7 @@ export default {
     redmine.configure(user)
     if (store.getters.connectStat) {
       try {
-        pendingRequestManager.clear()
+        // pendingRequestManager.clear()
         await this.retrievePojects()
         await this.retrieveCustomFields()
         await this.retrieveIssues()

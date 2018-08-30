@@ -436,19 +436,23 @@ export default {
       }
     },
     previewAttachment: function (file) {
-      console.log('select attachment :')
-      console.log('  filename :' + file.filename)
-      console.log('  content_type : ' + file.content_type)
-      console.log('  content_url : ' + file.content_url)
-      console.log('  id : ' + file.id)
-      let contentUrl = this.test_url + this.issId + '/' + file.id + '_' + file.filename
-      if (file.content_type.indexOf('video') === -1) {
-        // 動画以外はそのまま新しいタブで表示
-        console.log('image')
+      if (!this.connected) {
+        alert('オフラインモード　添付ファイルを取得できません')
       } else {
-        console.log('video')
+        console.log('select attachment :')
+        console.log('  filename :' + file.filename)
+        console.log('  content_type : ' + file.content_type)
+        console.log('  content_url : ' + file.content_url)
+        console.log('  id : ' + file.id)
+        let contentUrl = this.test_url + this.issId + '/' + file.id + '_' + file.filename
+        if (file.content_type.indexOf('video') === -1) {
+          // 動画以外はそのまま新しいタブで表示
+          console.log('image')
+        } else {
+          console.log('video')
+        }
+        window.open(contentUrl)
       }
-      window.open(contentUrl)
     },
     getIssueDetail: async function () {
       if (this.issId !== -1) {

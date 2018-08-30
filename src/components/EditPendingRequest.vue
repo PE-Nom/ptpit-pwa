@@ -227,21 +227,6 @@ export default {
       // iOS safariではきちんと表示されるので、これで行く。（動画もOK）
       window.open(attachmentFile.attachment.value.mediaData)
     },
-    // 引数はbase64形式の文字列と作成するファイルオブジェクトのファイル名
-    createFile (request) {
-      let mediaData = request.value.mediaData
-      let name = request.value.name
-      let filePropertyBag = request.value.filePropertyBag
-      // base64のデコード
-      let bin = atob(mediaData.replace(/^.*,/, ''))
-      // バイナリデータ化
-      let buffer = new Uint8Array(bin.length)
-      for (let i = 0; i < bin.length; i++) {
-        buffer[i] = bin.charCodeAt(i)
-      }
-      // ファイルオブジェクト生成(この例ではjpegファイル)
-      return new File([buffer.buffer], name, filePropertyBag)
-    },
     getIssueDetail: async function () {
       console.log('EditPendingRequest.getIssueDetail')
       console.log(this.requestObj)

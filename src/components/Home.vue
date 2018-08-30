@@ -2,6 +2,10 @@
   <div class="banner-title">
     <div>
       <h1>{{ msg }}</h1>
+      <div>
+      <img src="../assets/safetyfirst.png" alt="安全第一">
+      </div>
+      <br>
       <br>
       <p class="explanation">{{system}}</p>
       <p class="explanation">{{subname}}</p>
@@ -15,7 +19,7 @@ export default {
   // name: 'Home',
   data () {
     return {
-      msg: 'Pit-SAN',
+      msg: 'ピットさん',
       system: 'Safety And Nonconforming',
       subname: 'Management System',
       corporate: 'by Pitarpit Co.,Ltd.'
@@ -39,7 +43,7 @@ export default {
     text-align: center;
   }
   .explanation {
-    font-weight: 200;
-    font-size: 1.5rem;
+    font-weight: 100;
+    font-size: 1rem;
   }
 </style>

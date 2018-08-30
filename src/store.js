@@ -17,7 +17,6 @@ const store = new Vuex.Store({
       alert('connectStat is ' + state.connectStat)
       let connection = navigator.connection
       console.log(connection)
-      alert(connection)
     }
   }
 })

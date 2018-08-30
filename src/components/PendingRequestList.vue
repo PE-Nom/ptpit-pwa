@@ -17,15 +17,20 @@
     <div class="tablet">
       <b-container class="table-row header">
         <b-row>
-          <b-col cols="4">
-            <label>未登録指摘一覧</label>
+          <b-col cols="6">
+            <label>未登録指摘一覧 ({{connectStatus}})</label>
           </b-col>
-          <b-col cols="4">
-            <label>({{connectStatus}})</label>
+          <b-col cols="2">
+            <img :src="icon_connection" class="trash" width='25px' height='25px' @click="checkServerAccess"/>
           </b-col>
-          <b-col cols="4">
+          <b-col cols="2">
+            <img :src="icon_new_issue" class="new_issue" width='30px' height='30px' @click="createIssue"/>
+          </b-col>
+          <b-col cols="2">
+            <img :src="icon_upload" v-if="connected" class="up-load" width='30px' height='30px' @click="upload"/>
           </b-col>
         </b-row>
+            <!--
         <b-row>
           <b-col cols="4">
             <label class="currentpath-user" >選択 ({{selectRequestKey}})</label>
@@ -43,6 +48,7 @@
             <img :src="icon_upload" v-if="connected" class="up-load" width='30px' height='30px' @click="upload"/>
           </b-col>
         </b-row>
+            -->
       </b-container>
     </div>
 
@@ -136,12 +142,16 @@ export default {
     },
     select (idx, entry) {
       console.log('selected request key is ' + entry.key)
-      this.selectRequestKey = entry.key
-      editstate.currentPendingRequest = this.requestObjs[idx]
-      if (idx < (this.requestObjs.length - 1) && this.requestObjs[idx + 1].value.request === 'file attach') {
-        editstate.attachment = this.requestObjs[idx + 1]
+      if (this.requestObjs[idx].value.request !== 'file attach') {
+        this.selectRequestKey = entry.key
+        editstate.currentPendingRequest = this.requestObjs[idx]
+        if (idx < (this.requestObjs.length - 1) && this.requestObjs[idx + 1].value.request === 'file attach') {
+          editstate.attachment = this.requestObjs[idx + 1]
+        }
+        router.push('/editpendingrequest')
+      } else {
+        alert('これはファイル添付のレコードです。\r "create"もしくは"update"のレコードを選択してください。')
       }
-      router.push('/editpendingrequest')
     },
     async checkServerAccess () {
       console.log('checkServerAccess')

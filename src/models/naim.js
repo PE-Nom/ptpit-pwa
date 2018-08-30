@@ -398,6 +398,7 @@ export default {
           description: imageDescription,
           mediaData: mediaData,
           name: file.name,
+          size: file.size,
           file_property_bag: {
             type: file.type,
             lastModified: file.lastModified

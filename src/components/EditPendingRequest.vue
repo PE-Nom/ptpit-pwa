@@ -11,7 +11,7 @@
       <!-- 情報アコーディオン -->
       <b-card no-body class="mb-1">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion-issue variant="success">安全指摘 id:#{{issueId}}</b-btn>
+          <b-btn block href="#" v-b-toggle.accordion-issue variant="success">{{pendingType}} id:#{{issueId}}</b-btn>
         </b-card-header>
         <b-collapse id="accordion-issue" visible accordion="issue-accordion" role="tabpanel">
           <b-card-body>
@@ -201,6 +201,7 @@ export default {
       token: '',
       mediaData: null,
 
+      pendingType: '',
       errorMessage: '',
       // for date selector
       dateFormat: 'YYYY-MM-DD',
@@ -219,7 +220,10 @@ export default {
       this.due_date = date.format(this.dateFormat)
       // console.log('期日' + this.due_date)
     },
-    previewAttachment: function (file) {
+    previewAttachment: function (attachmentFile) {
+      console.log('EditPendingRequest.previewAttachment')
+      let file = this.createFile(attachmentFile.attachment)
+      console.log(file)
       /*
       console.log('select attachment :')
       console.log('  filename :' + file.filename)
@@ -254,6 +258,7 @@ export default {
     getIssueDetail: async function () {
       console.log('EditPendingRequest.getIssueDetail')
       console.log(this.requestObj)
+      this.pendingType = this.requestObj.value.request === 'create' ? '指摘' : '更新'
       if (this.requestObj.value.id === '-1') {
         this.issueId = '**'
       } else {
@@ -275,14 +280,12 @@ export default {
         let attachmentItems = []
         let attachment = editstate.attachment
         console.log(attachment)
-        let file = this.createFile(attachment)
-        console.log(file)
         let item = {
+          attachment: attachment,
           filename: attachment.value.name,
-          filesize: parseInt(file.size / 1000) + 'kbyte',
+          filesize: parseInt(attachment.value.size / 1000) + 'kbyte',
           description: attachment.value.description,
           content_type: attachment.value.type,
-          content_url: file.content_url,
           id: '***'
         }
         attachmentItems.push(item)

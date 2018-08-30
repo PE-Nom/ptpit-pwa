@@ -222,23 +222,10 @@ export default {
     },
     previewAttachment: function (attachmentFile) {
       console.log('EditPendingRequest.previewAttachment')
-      let file = this.createFile(attachmentFile.attachment)
-      console.log(file)
-      /*
-      console.log('select attachment :')
-      console.log('  filename :' + file.filename)
-      console.log('  content_type : ' + file.content_type)
-      console.log('  content_url : ' + file.content_url)
-      console.log('  id : ' + file.id)
-      let contentUrl = this.test_url + this.issId + '/' + file.id + '_' + file.filename
-      if (file.content_type.indexOf('video') === -1) {
-        // 動画以外はそのまま新しいタブで表示
-        console.log('image')
-      } else {
-        console.log('video')
-      }
-      window.open(contentUrl)
-      */
+      // Chrome では Base64 で window.open すると何も表示されない
+      // Chrome 60 以降の現象で 59 までであれば表示される様。
+      // iOS safariではきちんと表示されるので、これで行く。（動画もOK）
+      window.open(attachmentFile.attachment.value.mediaData)
     },
     // 引数はbase64形式の文字列と作成するファイルオブジェクトのファイル名
     createFile (request) {

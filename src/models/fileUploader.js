@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://192.168.1.4:8081' // @ Office
-// const BASE_URL = 'http://192.168.10.9:8081' // @ home
+// const BASE_URL = 'http://192.168.1.4:8081' // @ Office
+const BASE_URL = 'http://192.168.10.8:8081' // @ home
 
 export default {
   async uploadFile (issId, attachId, file) {
@@ -15,11 +15,25 @@ export default {
       .then(res => {
         console.log('axios.post success')
         console.log(res)
+        return res
       })
       .catch(err => {
         console.log('axios.post error')
         console.log(err)
         throw err
       })
+  },
+  async pingToServer () {
+    console.log('pingToServer @ fileUploader.js')
+    let response = null
+    await axios.get(BASE_URL + '/dateandtime', { timeout: 300 })
+      .then(res => {
+        console.log(res)
+        response = res
+      })
+      .catch(err => {
+        throw (err)
+      })
+    return response
   }
 }

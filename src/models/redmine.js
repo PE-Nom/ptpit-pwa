@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://192.168.1.4:3001/' // for demo pitarpit dell
-// const BASE_URL = 'http://192.168.10.9:3001' // @home on dell
+// const BASE_URL = 'http://192.168.1.4:3001/' // for demo pitarpit dell
+const BASE_URL = 'http://192.168.10.8:3001' // @home on dell
 
 export default {
   rmc: null,

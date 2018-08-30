@@ -13,8 +13,11 @@ const store = new Vuex.Store({
   mutations: {
     setConnectStat (state, payload) {
       state.connectStat = payload.connectStat
-      alert('connectStat is ' + state.connectStat)
       console.log(state.connectStat)
+      alert('connectStat is ' + state.connectStat)
+      let connection = navigator.connection
+      console.log(connection)
+      alert(connection)
     }
   }
 })

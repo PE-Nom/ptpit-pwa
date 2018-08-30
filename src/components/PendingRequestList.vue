@@ -18,7 +18,7 @@
       <b-container class="table-row header">
         <b-row>
           <b-col cols="4">
-            <label>未登録の指摘一覧</label>
+            <label>未登録指摘一覧</label>
           </b-col>
           <b-col cols="4">
             <label>({{connectStatus}})</label>
@@ -27,11 +27,14 @@
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="6">
+          <b-col cols="4">
             <label class="currentpath-user" >選択リクエスト ({{selectRequestKey}})</label>
           </b-col>
           <b-col cols="2">
             <img :src="icon_trash" class="trash" width='25px' height='25px' @click="remove"/>
+          </b-col>
+          <b-col cols="2">
+            <img :src="icon_connection" class="trash" width='25px' height='25px' @click="checkServerAccess"/>
           </b-col>
           <b-col cols="2">
             <img :src="icon_new_issue" class="new_issue" width='30px' height='30px' @click="createIssue"/>
@@ -68,6 +71,7 @@ import fileUploader from '../models/fileUploader.js'
 import iconUpload from '../assets/upload.png'
 import iconNew from '../assets/new.png'
 import iconTrash from '../assets/trash.png'
+import iconConnection from '../assets/connection.png'
 
 export default {
   data () {
@@ -79,6 +83,7 @@ export default {
       icon_trash: iconTrash,
       icon_new_issue: iconNew,
       icon_upload: iconUpload,
+      icon_connection: iconConnection,
       selectRequestKey: '',
       connectStatus: ''
     }
@@ -130,6 +135,16 @@ export default {
     select (entry) {
       console.log('selected request key is ' + entry.key)
       this.selectRequestKey = entry.key
+    },
+    async checkServerAccess () {
+      console.log('checkServerAccess')
+      let resp
+      try {
+        resp = await fileUploader.pingToServer()
+      } catch (err) {
+        alert(err)
+      }
+      alert(resp.data.dateandtime)
     },
     remove () {
       console.log('remove')

@@ -23,14 +23,26 @@ app.use(function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(multer({dest: './tmp/', limits: {fieldSize: 204800 * 1024}}).single('file'))
 
-app.get('/up.html', function (req, res) {
+app.get('/dateandtime', function (req, res) {
   // res.sendFile(__dirname + '/' + 'up.html')
-  res.sendFile(path.join(__dirname, '/up.html'))
+  // res.sendFile(path.join(__dirname, '/up.html'))
+  let DD = new Date()
+  let Hours = DD.getHours()
+  let Minutes = DD.getMinutes()
+  let Seconds = DD.getSeconds()
+  let dateandtime = Hours + '時' + Minutes + '分' + Seconds + '秒'
+  console.log('==== ' + dateandtime)
+  let response = {
+    message: 'Success!',
+    dateandtime: dateandtime
+  }
+  let resp = JSON.stringify(response)
+  res.end(resp)
 })
 
 app.post('/file_upload', function (req, res) {
   console.log('######')
-  // console.log(req)
+  console.log(req)
   // let file = path.join(__dirname, '/public/images/' + req.body.originalname)
   console.log('---- チケットId : ', req.body.issueId)
   console.log('---- 添付Id : ', req.body.attachId)
@@ -40,6 +52,7 @@ app.post('/file_upload', function (req, res) {
   }
   file = path.join(file, req.body.attachId + '_' + req.file.originalname)
   console.log(file)
+  console.log(req.file.path)
   fs.readFile(req.file.path, function (err, data) {
     if (err) {
       console.log(err)
@@ -67,7 +80,8 @@ app.post('/file_upload', function (req, res) {
           }
         }
         console.log(response)
-        res.end(JSON.stringify(response))
+        let resp = JSON.stringify(response)
+        res.end(resp)
       })
     }
   })

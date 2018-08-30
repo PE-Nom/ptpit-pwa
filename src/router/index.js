@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import IssuesList from '@/components/IssuesList'
 import EditIssue from '@/components/EditIssue'
 import PendingRequestList from '@/components/PendingRequestList'
+import EditPendingRequest from '@/components/EditPendingRequest'
 
 Vue.use(Router)
 
@@ -28,7 +29,11 @@ export default new Router({
       path: '/pendingrequests',
       name: 'PendingRequestsList',
       component: PendingRequestList
+    },
+    {
+      path: '/editpendingrequest',
+      name: 'EditPendingRequest',
+      component: EditPendingRequest
     }
-
   ]
 })

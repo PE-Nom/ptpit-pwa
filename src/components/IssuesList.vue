@@ -150,6 +150,7 @@ export default {
       } else {
         console.log('editIssue')
         editstate.currentIssueId = issId
+        editstate.previousPath = '/tickets'
         this.$router.push('/editissue')
       }
     },
@@ -165,6 +166,7 @@ export default {
     createIssue: function () {
       console.log('createIssue')
       editstate.currentIssueId = -1
+      editstate.previousPath = '/tickets'
       this.$router.push('/editissue')
     }
   },

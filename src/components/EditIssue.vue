@@ -3,6 +3,9 @@
     <b-navbar v-if="showNavbar" type="dark" variant="success">
       <b-navbar-brand to="/tickets">&lt;&lt; 指摘一覧</b-navbar-brand>
     </b-navbar>
+    <b-navbar v-else type="dark" variant="success">
+      <b-navbar-brand to="/pendingrequests">&lt;&lt; 未登録指摘一覧</b-navbar-brand>
+    </b-navbar>
     <b-container class="table-row header">
       <label class="currentpath-user" >{{currentPath}} ({{connectStatus}})</label>
     </b-container>
@@ -221,7 +224,6 @@ export default {
       issId: null,
       issueId: '',
       issDetail: null,
-      projectName: '',
       projectId: '',
       projectOptions: [{value: '', text: ''}],
       subject: '',
@@ -286,7 +288,7 @@ export default {
     },
     showNavbar: function () {
       let show = true
-      if (this.$route.path !== '/editissue') {
+      if (editstate.previousPath === '/pendingrequests') {
         show = false
       }
       return show
@@ -454,7 +456,6 @@ export default {
         this.issDetail = await naim.getIssueDetail(Number(this.issId))
         console.log(this.issDetail)
         if (this.issDetail !== null) {
-          this.projectName = this.issDetail.project.name
           this.projectId = this.issDetail.project.id
           this.subject = this.issDetail.subject
           this.description = this.issDetail.description
@@ -542,10 +543,6 @@ export default {
   },
   mounted () {
     // console.log('EditIssue mounted')
-  },
-  destroy () {
-    editstate.clearCurrentPath()
-    editstate.clearCurrentIssId()
   }
 }
 </script>

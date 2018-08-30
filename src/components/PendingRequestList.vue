@@ -4,7 +4,7 @@
     <div class="desktop table-row header">
       <b-row>
         <b-col cols="2">
-            <label class="currentpath-user" >未登録の指摘一 ({{connectStatus}})</label>
+            <label class="currentpath-user" >未登録指摘一覧 ({{connectStatus}})</label>
         </b-col>
         <b-col cols="2">
             <img :src="icon_upload" class="up-load" width='30px' height='30px' @click="upload"/>
@@ -28,7 +28,7 @@
         </b-row>
         <b-row>
           <b-col cols="4">
-            <label class="currentpath-user" >選択リクエスト ({{selectRequestKey}})</label>
+            <label class="currentpath-user" >選択 ({{selectRequestKey}})</label>
           </b-col>
           <b-col cols="2">
             <img :src="icon_trash" class="trash" width='25px' height='25px' @click="remove"/>
@@ -47,7 +47,7 @@
     </div>
 
     <div class="data-field">
-      <div v-for="(entry, idx) in requestStrs" v-bind:key=idx @click="select(entry)">
+      <div v-for="(entry, idx) in requestStrs" v-bind:key=idx @click="select(idx, entry)">
         <div class="table-row data">
           <div class="wrapper attributes data">
             <div v-for="(val, idx) in columns" v-bind:key=idx :class="[val]">
@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import router from '../router'
 import editstate from '../models/editState.js'
 import prm from '../models/pendingRequestManager.js'
 import naim from '../models/naim.js'
@@ -130,11 +131,17 @@ export default {
     createIssue: function () {
       console.log('createIssue')
       editstate.currentIssueId = -1
+      editstate.previousPath = '/pendingrequests'
       this.$router.push('/editissue')
     },
-    select (entry) {
+    select (idx, entry) {
       console.log('selected request key is ' + entry.key)
       this.selectRequestKey = entry.key
+      editstate.currentPendingRequest = this.requestObjs[idx]
+      if (idx < (this.requestObjs.length - 1) && this.requestObjs[idx + 1].value.request === 'file attach') {
+        editstate.attachment = this.requestObjs[idx + 1]
+      }
+      router.push('/editpendingrequest')
     },
     async checkServerAccess () {
       console.log('checkServerAccess')

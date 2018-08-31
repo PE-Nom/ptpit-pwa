@@ -216,8 +216,9 @@ export default {
   },
   data () {
     return {
-      test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
+      // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
+      test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
 
       new: false,
       currentPath: '',

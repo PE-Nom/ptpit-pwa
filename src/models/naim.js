@@ -3,6 +3,7 @@ import pendingRequestManager from './pendingRequestManager.js'
 import redmine from './redmine.js'
 import editstate from './editState.js'
 import util from './util.js'
+import fileUploader from '../models/fileUploader.js'
 
 export default {
 
@@ -21,7 +22,11 @@ export default {
   initialize: async function (user) {
     console.log('initialize @ naim')
     redmine.configure(user)
-    if (store.getters.connectStat) {
+    let resp
+    try {
+      resp = await fileUploader.pingToServer()
+      alert(resp)
+      store.commit('setConnectStat', {connectStat: true})
       try {
         // pendingRequestManager.clear()
         await this.retrievePojects()
@@ -36,7 +41,9 @@ export default {
       } catch (err) {
         throw err
       }
-    } else {
+    } catch (err) {
+      alert(err)
+      store.commit('setConnectStat', {connectStat: false})
       this.projects = JSON.parse(localStorage.getItem('projects'))
       this.issues = JSON.parse(localStorage.getItem('issues'))
       this.trackers = JSON.parse(localStorage.getItem('trackers'))

@@ -27,20 +27,16 @@ export default {
       resp = await fileUploader.pingToServer()
       alert(resp.data.dateandtime)
       store.commit('setConnectStat', {connectStat: true})
-      try {
-        // pendingRequestManager.clear()
-        await this.retrievePojects()
-        await this.retrieveCustomFields()
-        await this.retrieveIssues()
-        await this.retrieveTrackers()
-        await this.retrieveIssueStatuses()
-        await this.retrieveIssuePriorities()
-        await this.retrieveUsers()
-        await this.retrieveTimeEntryActivities()
-        await this.retrieveDocumentCategories()
-      } catch (err) {
-        throw err
-      }
+      // pendingRequestManager.clear()
+      await this.retrievePojects()
+      await this.retrieveCustomFields()
+      await this.retrieveIssues()
+      await this.retrieveTrackers()
+      await this.retrieveIssueStatuses()
+      await this.retrieveIssuePriorities()
+      await this.retrieveUsers()
+      await this.retrieveTimeEntryActivities()
+      await this.retrieveDocumentCategories()
     } catch (err) {
       alert(err)
       store.commit('setConnectStat', {connectStat: false})

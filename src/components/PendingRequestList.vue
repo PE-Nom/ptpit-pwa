@@ -158,12 +158,12 @@ export default {
       let resp
       try {
         resp = await fileUploader.pingToServer()
+        alert(resp.data.dateandtime)
+        this.$store.commit('setConnectStat', {connectStat: true})
       } catch (err) {
         alert(err)
         this.$store.commit('setConnectStat', {connectStat: false})
       }
-      alert(resp.data.dateandtime)
-      this.$store.commit('setConnectStat', {connectStat: true})
     },
     remove () {
       console.log('remove')

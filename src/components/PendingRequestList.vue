@@ -147,6 +147,8 @@ export default {
         editstate.currentPendingRequest = this.requestObjs[idx]
         if (idx < (this.requestObjs.length - 1) && this.requestObjs[idx + 1].value.request === 'file attach') {
           editstate.attachment = this.requestObjs[idx + 1]
+        } else {
+          editstate.attachment = null
         }
         router.push('/editpendingrequest')
       } else {

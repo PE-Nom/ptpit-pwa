@@ -25,7 +25,7 @@ export default {
     let resp
     try {
       resp = await fileUploader.pingToServer()
-      alert(resp)
+      alert(resp.data.dateandtime)
       store.commit('setConnectStat', {connectStat: true})
       try {
         // pendingRequestManager.clear()

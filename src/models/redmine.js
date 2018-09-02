@@ -1,7 +1,8 @@
 import axios from 'axios'
 
-// const BASE_URL = 'http://192.168.1.4:3001/' // for demo pitarpit dell
-const BASE_URL = 'http://192.168.10.8:3001' // @home on dell
+const BASE_URL = 'http://192.168.10.5:3001/' // for demo pitarpit dell
+// const BASE_URL = 'http://192.168.1.4:3001/' // @office
+// const BASE_URL = 'http://192.168.10.8:3001' // @home on dell
 // const BASE_URL = 'http://192.168.10.9:3001' // @home on let's note
 
 export default {

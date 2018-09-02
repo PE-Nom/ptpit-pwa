@@ -216,8 +216,9 @@ export default {
   },
   data () {
     return {
+      test_url: 'http://192.168.10.5/JS/data/', // @ for demo
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
-      test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
+      // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
       // test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
 
       new: false,
@@ -437,7 +438,7 @@ export default {
       }
     },
     previewAttachment: function (file) {
-      if (!this.connected) {
+      if (!this.$store.getters.connectStat) {
         alert('オフラインモード　添付ファイルを取得できません')
       } else {
         console.log('select attachment :')

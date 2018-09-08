@@ -7,11 +7,11 @@ var multer = require('multer')
 var path = require('path')
 
 // const options = {
-//   key: fs.readFileSync('C:/Bitnami/redmine-3.4.5-0/apache2/conf/server.key'),
-//   cert: fs.readFileSync('C:/Bitnami/redmine-3.4.5-0/apache2/conf/server.crt')
+//   key: fs.readFileSync('C:/Bitnami/redmine-3.4.6-1/apache2/conf/server.key'),
+//   cert: fs.readFileSync('C:/Bitnami/redmine-3.4.6-1/apache2/conf/server.crt')
 // }
-// const folderPath = 'C:/Bitnami/redmine-3.4.5-0/apache2/htdocs/data'
-const folderPath = 'C:/home/apache/htdocs/JS/data/'
+const folderPath = 'C:/Bitnami/redmine-3.4.6-1/apache2/htdocs/data'
+// const folderPath = 'C:/home/apache/htdocs/JS/data/'
 // const folderPath = '/var/www/html/JS/data/'
 // CORSを許可する
 app.use(function (req, res, next) {
@@ -94,5 +94,6 @@ var server = app.listen(port, function () {
   console.log(path.join(__dirname, '/public/images'))
   console.log('listening at http://%s:%s', host, port)
 })
+// ----------
 // var server = https.createServer(options, app)
 // server.listen(port)

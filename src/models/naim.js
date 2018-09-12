@@ -204,10 +204,12 @@ export default {
   // ------------------
   retrieveIssues: async function () {
     try {
+      console.log('### retrieveIssues ###')
       if (store.getters.connectStat) {
         // Issues List
         const iss = []
         this.issues = []
+        console.log(' call redmine.issues')
         if (redmine.isConfigured()) {
           await redmine.issues(res => {
             console.log('==== Issues @ naim ====')
@@ -240,9 +242,12 @@ export default {
         localStorage.setItem('issues', JSON.stringify(this.issues))
         console.log(this.issues)
       } else {
+        console.log('read issues from localStorage')
         this.issues = JSON.parse(localStorage.getItem('issues'))
       }
     } catch (err) {
+      console.log('err @ retrieveIssues')
+      console.log(err)
       alert(err)
       throw err
     }

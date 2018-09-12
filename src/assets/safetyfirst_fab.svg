@@ -12,15 +12,15 @@
    width="210mm"
    height="297mm"
    viewBox="0 0 744.09448819 1052.3622047"
-   id="svg2"
+   id="svg4166"
    version="1.1"
    inkscape:version="0.91 r13725"
-   inkscape:export-filename="C:\home\apache\htdocs\JS\redmineclient\ptpit-pwa\static\img\icons\safetyfirst-144x144.png"
-   inkscape:export-xdpi="60.87627"
-   inkscape:export-ydpi="60.87627"
-   sodipodi:docname="SafetyFirst.svg">
+   inkscape:export-filename="C:\home\apache\htdocs\JS\redmineclient\ptpit-pwa\static\img\icons\favicon-32x32.png"
+   inkscape:export-xdpi="16.4793"
+   inkscape:export-ydpi="16.4793"
+   sodipodi:docname="safetyfirst_fab.svg">
   <defs
-     id="defs4" />
+     id="defs4168" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="271.91397"
-     inkscape:cy="741.12523"
+     inkscape:zoom="3.959798"
+     inkscape:cx="132.34757"
+     inkscape:cy="481.01518"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,7 +40,7 @@
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
-     id="metadata7">
+     id="metadata4171">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -55,45 +55,11 @@
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#008000;stroke-width:4.91331387;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect4777"
-       width="207.47292"
-       height="208.13666"
-       x="211.97783"
-       y="235.35008"
-       ry="0.59914708" />
-    <g
-       id="g4783"
-       transform="matrix(2.3295371,0,0,1.9158126,74.518158,27.034051)">
-      <text
-         transform="scale(1.1020705,0.90738297)"
-         id="text4515-7"
-         y="229.35345"
-         x="94.607353"
-         style="font-style:normal;font-weight:normal;font-size:17.51394844px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#999999;fill-opacity:1;stroke:none;stroke-width:0.43784869"
-         xml:space="preserve"><tspan
-           style="fill:#999999;stroke-width:0.43784869"
-           y="229.35345"
-           x="94.607353"
-           id="tspan4513-5"
-           sodipodi:role="line">安全第一</tspan></text>
-      <text
-         transform="scale(1.1020705,0.90738297)"
-         id="text4515"
-         y="228.40967"
-         x="93.76918"
-         style="font-style:normal;font-weight:normal;font-size:17.51394844px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.43784869"
-         xml:space="preserve"><tspan
-           style="stroke-width:0.43784869"
-           y="228.40967"
-           x="93.76918"
-           id="tspan4513"
-           sodipodi:role="line">安全第一</tspan></text>
-    </g>
     <g
        id="g4789"
-       transform="matrix(2.3295371,0,0,1.9158126,74.228714,27.034051)">
+       transform="matrix(2.3295371,0,0,2.3422761,-109.9132,202.06234)"
+       inkscape:export-xdpi="8.2396498"
+       inkscape:export-ydpi="8.2396498">
       <rect
          ry="0.32544279"
          y="143.85457"

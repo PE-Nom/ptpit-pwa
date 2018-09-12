@@ -220,8 +220,14 @@ export default {
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
       // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
       // test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
+      // test_url: 'http://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
+
       // test_url: 'https://192.168.1.4/data/', // @office on dell over https
-      test_url: 'https://192.168.10.6/data/', // @home on dell over https
+      // ------
+      // test_url: 'https://192.168.10.6/data/', // @home on dell over https
+      // test_url: 'https://192.168.10.5/data/', // @home on let's-note over https
+      // test_url: 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
+      test_url: 'https://www.nomtech-pwa.com/data/', // @ home on let's note
 
       new: false,
       currentPath: '',
@@ -283,7 +289,9 @@ export default {
       token: '',
       mediaData: null,
       uploading: false,
-      imageDescription: ''
+      imageDescription: '',
+      creating: false,
+      updating: false
     }
   },
   computed: {
@@ -409,34 +417,46 @@ export default {
     },
     createIssue: async function () {
       console.log('createIssue')
-      let qobj = this.createQueryString()
-      console.log(qobj)
-      let ret = await naim.createIssue(qobj)
-      await naim.retrieveIssues()
-      console.log(qobj)
-      if (this.mediaData !== null) {
-        editstate.currentIssueId = ret.data.issue.id
-        await this.uploadFile()
-      }
-      if (this.$store.getters.connectStat) {
-        router.push('/tickets')
+      if (this.creating) {
+        alert('登録処理中です。しばらくお待ちください')
       } else {
-        router.push('/pendingrequests')
+        this.creating = true
+        let qobj = this.createQueryString()
+        console.log(qobj)
+        let ret = await naim.createIssue(qobj)
+        await naim.retrieveIssues()
+        console.log(qobj)
+        if (this.mediaData !== null) {
+          editstate.currentIssueId = ret.data.issue.id
+          await this.uploadFile()
+        }
+        if (this.$store.getters.connectStat) {
+          router.push('/tickets')
+        } else {
+          router.push('/pendingrequests')
+        }
+        this.creating = false
       }
     },
     updateIssue: async function () {
       console.log('updateIssue')
-      let qobj = this.createQueryString()
-      await naim.updateIssue(this.issId, qobj)
-      await naim.retrieveIssues()
-      console.log(qobj)
-      if (this.mediaData !== null) {
-        await this.uploadFile()
-      }
-      if (this.$store.getters.connectStat) {
-        router.push('/tickets')
+      if (this.updating) {
+        alert('更新処理中です。しばらくお待ちください')
       } else {
-        router.push('/pendingrequests')
+        this.updating = true
+        let qobj = this.createQueryString()
+        await naim.updateIssue(this.issId, qobj)
+        await naim.retrieveIssues()
+        console.log(qobj)
+        if (this.mediaData !== null) {
+          await this.uploadFile()
+        }
+        if (this.$store.getters.connectStat) {
+          router.push('/tickets')
+        } else {
+          router.push('/pendingrequests')
+        }
+        this.updating = false
       }
     },
     previewAttachment: function (file) {

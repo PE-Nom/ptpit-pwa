@@ -2,10 +2,7 @@
   <div id="app">
 
     <b-navbar v-if="showNavbar" toggleable="md" type="dark" variant="success">
-      <b-navbar-brand to="/">Pit-SAN (login: {{userName}})</b-navbar-brand>
-      <!--
-        <b-nav-text v-if="tablet" size="sm">{{currentPath}}／ユーザ:{{userName}}</b-nav-text>
-      -->
+      <b-navbar-brand to="/">Pit-SAN (version:{{version}})</b-navbar-brand>
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
@@ -29,7 +26,7 @@ export default {
   data () {
     return {
       activeUser: false,
-      userName: 'mhims1',
+      version: '1.00',
       tablet: false
     }
   },

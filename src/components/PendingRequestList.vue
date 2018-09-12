@@ -92,7 +92,8 @@ export default {
       icon_upload: iconUpload,
       icon_connection: iconConnection,
       selectRequestKey: '',
-      connectStatus: ''
+      connectStatus: '',
+      uploading: false
     }
   },
   computed: {
@@ -226,8 +227,11 @@ export default {
       // ここではあえてfor ループで実装している
       if (!this.connected) {
         alert('オフラインモード　指摘情報をアップロードできません')
+      } else if (this.uploading) {
+        alert('アップロード中です。しばらくお待ちください')
       } else {
         let id = null
+        this.uploading = true
         for (let i = 0; i < this.requestObjs.length; i++) {
           let request = this.requestObjs[i]
           console.log(request)
@@ -250,6 +254,7 @@ export default {
         }
         await naim.retrieveIssues()
         this.retrievePendingRequests()
+        this.uploading = false
       }
     },
     retrievePendingRequests (e) {

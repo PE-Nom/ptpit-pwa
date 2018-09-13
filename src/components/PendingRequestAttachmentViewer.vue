@@ -1,7 +1,7 @@
 <template>
   <div class="content-fulied">
     <b-navbar type="dark" variant="success">
-      <b-navbar-brand to="/editpendingrequest">&lt;&lt; 未登録指摘一覧</b-navbar-brand>
+      <b-navbar-brand to="/editpendingrequest">&lt;&lt; 未登録の指摘内容</b-navbar-brand>
     </b-navbar>
     <p>名前 : {{attachment.value.name}}</p>
     <p>説明 : {{attachment.value.description}}</p>

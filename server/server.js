@@ -37,7 +37,9 @@ app.get('/dateandtime', function (req, res) {
     dateandtime: dateandtime
   }
   let resp = JSON.stringify(response)
-  res.end(resp)
+  setTimeout(function () { res.end(resp) }, 500)
+  console.log('return')
+  // res.end(resp)
 })
 
 app.post('/file_upload', function (req, res) {

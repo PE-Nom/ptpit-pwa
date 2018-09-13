@@ -25,6 +25,8 @@ export default {
     let resp
     try {
       resp = await fileUploader.pingToServer()
+      console.log('naim.initialize @ return from fileUploader.pingtoServer')
+      console.log(resp)
       alert(resp.data.dateandtime)
       store.commit('setConnectStat', {connectStat: true})
       // pendingRequestManager.clear()
@@ -42,6 +44,7 @@ export default {
       store.commit('setConnectStat', {connectStat: false})
       this.projects = JSON.parse(localStorage.getItem('projects'))
       this.issues = JSON.parse(localStorage.getItem('issues'))
+      this.customFields = JSON.parse(localStorage.getItem('customFields'))
       this.trackers = JSON.parse(localStorage.getItem('trackers'))
       this.issueStatuses = JSON.parse(localStorage.getItem('issueStatuses'))
       this.issuePriorities = JSON.parse(localStorage.getItem('issuePriorities'))

@@ -38,14 +38,16 @@ export default {
   async pingToServer () {
     console.log('pingToServer @ fileUploader.js')
     let response = null
-    await axios.get(BASE_URL + '/dateandtime', { timeout: 500 })
+    await axios.get(BASE_URL + '/dateandtime', { timeout: 2000 })
       .then(res => {
+        console.log('axios.get.then')
         console.log(res)
         response = res
       })
       .catch(err => {
         throw (err)
       })
+    console.log('return from pingToServer')
     return response
   }
 }

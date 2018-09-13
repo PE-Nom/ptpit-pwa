@@ -3,7 +3,7 @@ export default {
     currentProjectId: null,
     currentIssueId: null,
     currentPendingRequest: null,
-    previosusPath: null,
+    previousPath: null,
     attachment: null
   }
 }

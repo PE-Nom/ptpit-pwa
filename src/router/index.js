@@ -5,6 +5,8 @@ import IssuesList from '@/components/IssuesList'
 import EditIssue from '@/components/EditIssue'
 import PendingRequestList from '@/components/PendingRequestList'
 import EditPendingRequest from '@/components/EditPendingRequest'
+import AttachmentViewer from '@/components/AttachmentViewer'
+import PendingRequestAttachmentViewer from '@/components/PendingRequestAttachmentViewer'
 
 Vue.use(Router)
 
@@ -26,6 +28,11 @@ export default new Router({
       component: EditIssue
     },
     {
+      path: '/attachmentviewer',
+      name: 'AttachmentViewer',
+      component: AttachmentViewer
+    },
+    {
       path: '/pendingrequests',
       name: 'PendingRequestsList',
       component: PendingRequestList
@@ -34,6 +41,11 @@ export default new Router({
       path: '/editpendingrequest',
       name: 'EditPendingRequest',
       component: EditPendingRequest
+    },
+    {
+      path: '/pendingrequestattachmentviewer',
+      name: 'PendingRequestAttachmentViewer',
+      component: PendingRequestAttachmentViewer
     }
   ]
 })

@@ -162,12 +162,12 @@
             <div class="attachment-field">
               <!-- 添付ファイルのリスト表示領域 -->
               <b-list-group>
-                <b-list-group-item v-for="(val, idx) in attachments" v-bind:key=idx>
+                <b-list-group-item v-for="(attachment, idx) in attachments" v-bind:key=idx>
                   <!--
                   <a :href="val.content_url">{{val.filename}}</a> ({{val.filesize}}) <br>
                   -->
-                  <a href="#!" v-on:click="previewAttachment(val)"> {{val.filename}} </a> ({{val.filesize}}) <br>
-                  {{val.description}}
+                  <a href="#!" v-on:click="previewAttachment(attachment)"> {{attachment.filename}} </a> ({{attachment.filesize}}) <br>
+                  {{attachment.description}}
                 </b-list-group-item>
               </b-list-group>
               <div class="h-divider"></div>
@@ -216,7 +216,7 @@ export default {
   },
   data () {
     return {
-      // test_url: 'http://192.168.10.5/JS/data/', // @ for demo
+      test_url: 'http://192.168.10.5/JS/data/', // @ for demo
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
       // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
       // test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
@@ -227,7 +227,8 @@ export default {
       // test_url: 'https://192.168.10.6/data/', // @home on dell over https
       // test_url: 'https://192.168.10.5/data/', // @home on let's-note over https
       // test_url: 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
-      test_url: 'https://www.nomtech-pwa.com/data/', // @ home on let's note
+
+      // test_url: 'https://www.nomtech-pwa.com/data/', // @ home on let's note
 
       new: false,
       currentPath: '',
@@ -459,23 +460,27 @@ export default {
         this.updating = false
       }
     },
-    previewAttachment: function (file) {
+    previewAttachment: function (attachment) {
       if (!this.$store.getters.connectStat) {
         alert('オフラインモード　添付ファイルを取得できません')
       } else {
         console.log('select attachment :')
-        console.log('  filename :' + file.filename)
-        console.log('  content_type : ' + file.content_type)
-        console.log('  content_url : ' + file.content_url)
-        console.log('  id : ' + file.id)
-        let contentUrl = this.test_url + this.issId + '/' + file.id + '_' + file.filename
-        if (file.content_type.indexOf('video') === -1) {
+        console.log('  filename :' + attachment.filename)
+        console.log('  content_type : ' + attachment.content_type)
+        console.log('  content_url : ' + attachment.content_url)
+        console.log('  id : ' + attachment.id)
+        // let contentUrl = this.test_url + this.issId + '/' + attachment.id + '_' + attachment.filename
+        if (attachment.content_type.indexOf('video') === -1) {
           // 動画以外はそのまま新しいタブで表示
           console.log('image')
         } else {
           console.log('video')
         }
+        /*
         window.open(contentUrl)
+        */
+        editstate.attachment = attachment
+        router.push('/attachmentviewer')
       }
     },
     getIssueDetail: async function () {

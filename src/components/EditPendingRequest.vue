@@ -125,12 +125,12 @@
             <div class="attachment-field">
               <!-- 添付ファイルのリスト表示領域 -->
               <b-list-group>
-                <b-list-group-item v-for="(val, idx) in attachments" v-bind:key=idx>
+                <b-list-group-item v-for="(attachment, idx) in attachments" v-bind:key=idx>
                   <!--
                   <a :href="val.content_url">{{val.filename}}</a> ({{val.filesize}}) <br>
                   -->
-                  <a href="#!" v-on:click="previewAttachment(val)"> {{val.filename}} </a> ({{val.filesize}}) <br>
-                  {{val.description}}
+                  <a href="#!" v-on:click="previewAttachment(attachment)"> {{attachment.filename}} </a> ({{attachment.filesize}}) <br>
+                  {{attachment.description}}
                 </b-list-group-item>
               </b-list-group>
               <div class="h-divider"></div>
@@ -143,7 +143,7 @@
 </template>
 
 <script>
-// import router from '../router'
+import router from '../router'
 import naim from '../models/naim.js'
 import editstate from '../models/editState.js'
 import dateSelector from './DateSelector.vue'
@@ -156,9 +156,6 @@ export default {
   },
   data () {
     return {
-      test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
-      // test_url: 'http://192.168.1.4/JS/data/', // @ office
-
       currentPath: '',
       issueId: '',
       requestObj: null,
@@ -220,12 +217,15 @@ export default {
       this.due_date = date.format(this.dateFormat)
       // console.log('期日' + this.due_date)
     },
-    previewAttachment: function (attachmentFile) {
+    previewAttachment: function (attachment) {
       console.log('EditPendingRequest.previewAttachment')
       // Chrome では Base64 で window.open すると何も表示されない
       // Chrome 60 以降の現象で 59 までであれば表示される様。
       // iOS safariではきちんと表示されるので、これで行く。（動画もOK）
-      window.open(attachmentFile.attachment.value.mediaData)
+      /*
+      window.open(attachment.attachment.value.mediaData)
+      */
+      router.push('/pendingrequestattachmentviewer')
     },
     getIssueDetail: async function () {
       console.log('EditPendingRequest.getIssueDetail')

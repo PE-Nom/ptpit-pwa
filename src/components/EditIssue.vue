@@ -216,20 +216,6 @@ export default {
   },
   data () {
     return {
-      test_url: 'http://192.168.10.5/JS/data/', // @ for demo
-      // test_url: 'http://192.168.1.4/JS/data/', // @ office
-      // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
-      // test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
-      // test_url: 'http://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
-
-      // test_url: 'https://192.168.1.4/data/', // @office on dell over https
-      // ------
-      // test_url: 'https://192.168.10.6/data/', // @home on dell over https
-      // test_url: 'https://192.168.10.5/data/', // @home on let's-note over https
-      // test_url: 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
-
-      // test_url: 'https://www.nomtech-pwa.com/data/', // @ home on let's note
-
       new: false,
       currentPath: '',
       issId: null,
@@ -469,16 +455,12 @@ export default {
         console.log('  content_type : ' + attachment.content_type)
         console.log('  content_url : ' + attachment.content_url)
         console.log('  id : ' + attachment.id)
-        // let contentUrl = this.test_url + this.issId + '/' + attachment.id + '_' + attachment.filename
         if (attachment.content_type.indexOf('video') === -1) {
           // 動画以外はそのまま新しいタブで表示
           console.log('image')
         } else {
           console.log('video')
         }
-        /*
-        window.open(contentUrl)
-        */
         editstate.attachment = attachment
         router.push('/attachmentviewer')
       }

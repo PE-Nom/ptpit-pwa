@@ -35,7 +35,8 @@ export default {
       // test_url: 'https://192.168.10.5/data/', // @home on let's-note over https
       // test_url: 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
 
-      test_url: 'https://www.nomtech-pwa.com/data/', // @AWS
+      // test_url: 'https://www.nomtech-pwa.com/data/', // @AWS
+      test_url: 'https://pitsan.nomtech-pwa.com/data/', // @AWS
 
       attachment: null,
       image_src: null

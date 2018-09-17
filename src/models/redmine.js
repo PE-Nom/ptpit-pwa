@@ -11,7 +11,8 @@ import axios from 'axios'
 // const BASE_URL = 'https://192.168.10.5/redmine' // @home on Let's-note over https
 // const BASE_URL = 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/redmine' // @AWS
 
-const BASE_URL = 'https://www.nomtech-pwa.com/redmine' // @AWS
+// const BASE_URL = 'https://www.nomtech-pwa.com/redmine' // @AWS
+const BASE_URL = 'https://pitsan.nomtech-pwa.com/redmine' // @AWS
 
 export default {
   rmc: null,

@@ -26,7 +26,7 @@ export default {
   data () {
     return {
       activeUser: false,
-      version: '1.00',
+      version: '1.01',
       tablet: false
     }
   },

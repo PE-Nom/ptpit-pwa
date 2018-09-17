@@ -13,7 +13,8 @@ import axios from 'axios'
 // const BASE_URL = 'https://192.168.10.5' // @home on let's-note over https for proxy test
 // const BASE_URL = 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com' // @ AWS
 
-const BASE_URL = 'https://www.nomtech-pwa.com/' // @ AWS
+// const BASE_URL = 'https://www.nomtech-pwa.com/' // @ AWS
+const BASE_URL = 'https://pitsan.nomtech-pwa.com/' // @ AWS
 
 export default {
   async uploadFile (issId, attachId, file) {

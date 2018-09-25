@@ -10,8 +10,8 @@ var path = require('path')
 //   key: fs.readFileSync('C:/Bitnami/redmine-3.4.6-1/apache2/conf/server.key'),
 //   cert: fs.readFileSync('C:/Bitnami/redmine-3.4.6-1/apache2/conf/server.crt')
 // }
-const folderPath = 'C:/Bitnami/redmine-3.4.6-1/apache2/htdocs/data'
-// const folderPath = 'C:/home/apache/htdocs/JS/data/'
+// const folderPath = 'C:/Bitnami/redmine-3.4.6-1/apache2/htdocs/data'
+const folderPath = 'C:/home/apache/htdocs/JS/data/'
 // const folderPath = '/var/www/html/JS/data/'
 // CORSを許可する
 app.use(function (req, res, next) {

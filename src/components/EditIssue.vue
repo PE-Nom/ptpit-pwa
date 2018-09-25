@@ -23,7 +23,10 @@
               <div id="summary">
                 <div class="form-group row-top">
                   <div class="col-md-10">
+                    <span>
                     <label for="inputSubject" class="control-label">件名</label>
+                    <img :src="icon_mic_enable" class="mic_enable" width='25px' height='25px' @click="recording"/>
+                    </span>
                     <input type="text" class="form-control" id="inputSubject" placeholder="題名" v-model="subject">
                   </div>
                 </div>
@@ -199,6 +202,7 @@
         </b-collapse>
       </b-card>
     </div>
+    <VoiceRecorder v-if="isVoiceRecorderActive" @cancelClose="cancelClose" @submitClose="submitClose"></VoiceRecorder>
   </div>
 </template>
 
@@ -207,15 +211,22 @@ import router from '../router'
 import naim from '../models/naim.js'
 import editstate from '../models/editState.js'
 import dateSelector from './DateSelector.vue'
+import VoiceRecorder from './VoiceRecorder.vue'
 import fileUploader from '../models/fileUploader.js'
 import util from '../models/util.js'
+import iconMicEnable from '../assets/mic_enable.png'
+import iconMicActive from '../assets/mic_active.png'
 
 export default {
   components: {
-    dateSelector
+    dateSelector,
+    VoiceRecorder
   },
   data () {
     return {
+      icon_mic_enable: iconMicEnable,
+      icon_mic_active: iconMicActive,
+      isVoiceRecorderActive: false,
       new: false,
       currentPath: '',
       issId: null,
@@ -314,6 +325,18 @@ export default {
     // }
   },
   methods: {
+    recording () {
+      console.log('recording')
+      this.isVoiceRecorderActive = true
+    },
+    submitClose () {
+      console.log('VoiceRecorder submitted')
+      this.isVoiceRecorderActive = false
+    },
+    cancelClose () {
+      console.log('VoiceRecorder canceled')
+      this.isVoiceRecorderActive = false
+    },
     startDate: function (date) {
       this.start_date = date.format(this.dateFormat)
       // console.log('開始日' + this.start_date)
@@ -608,5 +631,15 @@ export default {
     height:1px;
     width:100%;
     border-top:1px solid gray;
+  }
+  .mic_enable {
+    position: absolute;
+    right: 5%;
+    /*
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    */
   }
 </style>

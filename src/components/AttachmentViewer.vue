@@ -26,7 +26,7 @@ export default {
       // test_url: 'http://192.168.10.5/JS/data/', // @ for demo
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
       // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
-      // test_url: 'http://192.168.10.9/JS/data/', // @ home on let's note
+      test_url: 'http://192.168.10.6/JS/data/', // @ home on let's note
       // test_url: 'http://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
 
       // test_url: 'https://192.168.1.4/data/', // @office on dell over https
@@ -36,7 +36,7 @@ export default {
       // test_url: 'https://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
 
       // test_url: 'https://www.nomtech-pwa.com/data/', // @AWS
-      test_url: 'https://pitsan.nomtech-pwa.com/data/', // @AWS
+      // test_url: 'https://pitsan.nomtech-pwa.com/data/', // @AWS
 
       attachment: null,
       image_src: null

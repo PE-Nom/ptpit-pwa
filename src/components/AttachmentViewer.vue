@@ -26,10 +26,10 @@ export default {
       // test_url: 'http://192.168.10.5/JS/data/', // @ for demo
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
       // test_url: 'http://192.168.10.8/JS/data/', // @ home on dell
-      test_url: 'http://192.168.10.6/JS/data/', // @ home on let's note
+      // test_url: 'http://192.168.10.6/JS/data/', // @ home on let's note
       // test_url: 'http://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com/data/', // @ home on let's note
 
-      // test_url: 'https://192.168.1.4/data/', // @office on dell over https
+      test_url: 'https://192.168.1.4/data/', // @office on dell over https
       // ------
       // test_url: 'https://192.168.10.6/data/', // @home on dell over https
       // test_url: 'https://192.168.10.5/data/', // @home on let's-note over https

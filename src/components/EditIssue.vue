@@ -25,7 +25,7 @@
                   <div class="col-md-10">
                     <span>
                     <label for="inputSubject" class="control-label">件名</label>
-                    <img :src="icon_mic_enable" class="mic_enable" width='25px' height='25px' @click="recording"/>
+                    <img :src="icon_mic_enable" class="mic_enable" @click="recording"/>
                     </span>
                     <input type="text" class="form-control" id="inputSubject" placeholder="題名" v-model="subject">
                   </div>

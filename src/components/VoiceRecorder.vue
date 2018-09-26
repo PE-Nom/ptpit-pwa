@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type='button' class="btn btn-primary" @click='submit'>確定</button>
+            <button type='button' class="btn btn-default" @click='submit'>確定</button>
           </div>
         </div>
       </div>

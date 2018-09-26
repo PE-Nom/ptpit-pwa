@@ -29,7 +29,7 @@
 .modal-header {
   margin-top: 0;
   height: auto;
-  background-color: #002569;
+  background-color: #2778fc;
   color: rgba(255, 255, 255, 1);
 }
 
@@ -39,7 +39,7 @@
 .modal-footer {
   margin: 20px 0;
   height: auto;
-  background-color: #002569;
+  background-color: #2778fc;
   color: rgba(255, 255, 255, 1);
 }
 

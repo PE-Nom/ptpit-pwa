@@ -6,8 +6,8 @@ import axios from 'axios'
 // const BASE_URL = 'http://nomsan-elb-2142077815.ap-northeast-1.elb.amazonaws.com' // @ AWS
 
 // const BASE_URL = 'http://192.168.10.9:8081' // @ home let's note
-const BASE_URL = 'https://192.168.1.4:8081' // @office on dell over https
-// const BASE_URL = 'https://192.168.10.6:8081' // @home on dell over https
+// const BASE_URL = 'https://192.168.1.4:8081' // @office on dell over https
+const BASE_URL = 'https://192.168.10.6:8081' // @home on dell over https
 // ---
 // const BASE_URL = 'https://192.168.10.6' // @home on dell over https for proxy test
 // const BASE_URL = 'https://192.168.10.5' // @home on let's-note over https for proxy test

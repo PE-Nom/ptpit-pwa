@@ -111,9 +111,6 @@ export default {
   },
   watch: {
     listening: function (newVal, oldVal) {
-      console.log(this.$store)
-      console.log('watch listening newVal : ' + newVal + ', oldVal : ' + oldVal)
-      console.log('this.mode : ' + this.mode + ', this.isRecording : ' + this.isRecording)
       if (!newVal && oldVal && this.isRecording) {
         console.log('listening() computed value is changed true -> false')
         this.stopRecorder()
@@ -156,16 +153,32 @@ export default {
   },
   methods: {
     submit () {
+      this.finlize()
       console.log('VoiceRecorder submitted')
       this.$emit('submitClose')
     },
     cancel () {
+      this.finlize()
       console.log('VoiceRecorder canceled')
       this.$emit('cancelClose')
     },
     // ダミーリスナー
     nop () {
       console.log('nop')
+    },
+    // 確定、エスケープ時の終了処理
+    async finlize () {
+      if (this.isWaitListening) {
+        console.log('fianlize @ wait listening')
+        await stt.wsclose()
+        this.isWaitListening = false
+      } else if (this.isRecording) {
+        console.log('fianlize @ recording')
+        await this.stop()
+      } else if (this.isConverting) {
+        console.log('fianlize @ converting')
+        await this.stopConvert()
+      }
     },
     // 再変換開始制御
     async convertBlob () {
@@ -204,8 +217,8 @@ export default {
         stt.wssend(Buffer.alloc(0), {binary: true, mask: true})
       })
     },
-    stopConvert () {
-      stt.wsclose()
+    async stopConvert () {
+      await stt.wsclose()
       this.isConverting = false
       this.mode = MODE_REALTIME
     },

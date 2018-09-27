@@ -7,8 +7,10 @@
             <h5>音声メモ</h5>
             <h5 @click='cancel'>×</h5>
           </div>
-          <div class="modal-body">
+          <div>
             <canvas id="canvas" ref="canvas"></canvas>
+          </div>
+          <div class="modal-body">
             <b-row class='form-box'>
               <b-col cols="8">
                 <audio id="audio" ref="audio" controls></audio>
@@ -18,21 +20,29 @@
                 <icon-base v-else-if="!isRecording && (isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
                 <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stop"/></icon-base>
               </b-col>
-               <b-col cols="2">
+              <b-col cols="2">
                 <icon-base v-if="audioBlob && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
                 <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
-               </b-col>
-              </b-row>
+              </b-col>
+            </b-row>
+            <!--
             <div>
               <p>listenig : {{listening}}</p>
-            </div>
-            <div>
-              <!--
               <p> WsSendCount : {{wssendcnt}} </p>
               <p> AudioProcessCnt : {{audioprocesscnt}} </p>
-              -->
-              <p>transcript : {{transcript}}</p>
-              <p>result     : {{result}}</p>
+            </div>
+            -->
+            <p class="trans">transcript :</p>
+            <div class='transcript scroll-area' ref="transcript">
+              <div class='scroll_inner'>
+                <p>{{transcript}}</p>
+              </div>
+            </div>
+            <p class="trans">result :</p>
+            <div class='result scroll-area' ref="result">
+              <div class='scroll_inner'>
+                <p>{{result}}</p>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -141,6 +151,9 @@ export default {
         this.stop()
       }
     },
+    transcript: function (newVal, oldVal) {
+      this.$refs.transcript.scrollTop = this.$refs.transcript.scrollHeight
+    },
     transcribed: function (newVal, oldVal) {
       console.log('store.transcribed changed newVal : ' + newVal)
       if (this.result.length === 0) {
@@ -148,6 +161,7 @@ export default {
       } else {
         this.result = this.result + ',' + newVal
       }
+      this.$refs.result.scrollTop = this.$refs.result.scrollHeight
       console.log('result : ' + this.result)
     }
   },
@@ -471,6 +485,25 @@ button[disabled] {
 }
 audio {
   width: 100%;
+}
+.transcript.scroll-area {
+  width: 100%;
+  height: 2.5em;
+  overflow: auto;
+  border:#8db8ff solid 1px;
+}
+.result.scroll-area {
+  width: 100%;
+  height: 4.5em;
+  overflow: auto;
+  border:#8db8ff solid 1px;
+}
+.scroll-inner {
+  height: auto;
+}
+.trans {
+  margin-top: 0.5rem;
+  margin-bottom: 0rem;
 }
 @import '../style/modal.css'
 </style>

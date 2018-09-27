@@ -23,10 +23,14 @@
               <div id="summary">
                 <div class="form-group row-top">
                   <div class="col-md-10">
-                    <span>
-                    <label for="inputSubject" class="control-label">件名</label>
-                    <img :src="icon_mic_enable" class="mic_enable" @click="recording"/>
-                    </span>
+                    <b-row class='form-box'>
+                      <b-col cols="10">
+                        <label for="inputSubject" class="control-label">件名</label>
+                      </b-col>
+                      <b-col cols="2">
+                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                      </b-col>
+                    </b-row>
                     <input type="text" class="form-control" id="inputSubject" placeholder="題名" v-model="subject">
                   </div>
                 </div>
@@ -48,7 +52,14 @@
                 <!-- 安全巡視用 ここまで -->
                 <div class="form-group">
                   <div class="col-md-10">
-                    <label for="inputDescription" class="control-label">指摘内容</label>
+                    <b-row class='form-box'>
+                      <b-col cols="10">
+                        <label for="inputDescription" class="control-label">指摘内容</label>
+                      </b-col>
+                      <b-col cols="2">
+                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                      </b-col>
+                    </b-row>
                     <textarea class="form-control" rows="3" id="inputDescription" placeholder="指摘の記述" v-model="description"></textarea>
                   </div>
                 </div>
@@ -105,7 +116,14 @@
                     <div id="notation">
                       <div class="form-group">
                         <div class="col-md-10">
-                          <label for="inputNotaion" class="control-label">コメント</label>
+                          <b-row class='form-box'>
+                            <b-col cols="10">
+                                <label for="inputNotaion" class="control-label">コメント</label>
+                            </b-col>
+                            <b-col cols="2">
+                              <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                            </b-col>
+                          </b-row>
                           <textarea class="form-control" rows="3" id="inputNotation" v-model="notation"></textarea>
                         </div>
                       </div>
@@ -130,7 +148,14 @@
                     </div>
                     <div class="form-group">
                       <div class="col-md-10">
-                        <label for="inputImageDescription" class="control-label">画像の説明</label>
+                        <b-row class='form-box'>
+                          <b-col cols="10">
+                            <label for="inputImageDescription" class="control-label">画像の説明</label>
+                          </b-col>
+                          <b-col cols="2">
+                            <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                          </b-col>
+                        </b-row>
                         <textarea class="form-control" rows="3" id="inputImageDescription" placeholder="画像の説明記述" v-model="imageDescription"></textarea>
                       </div>
                     </div>
@@ -214,18 +239,18 @@ import dateSelector from './DateSelector.vue'
 import VoiceRecorder from './VoiceRecorder.vue'
 import fileUploader from '../models/fileUploader.js'
 import util from '../models/util.js'
-import iconMicEnable from '../assets/mic_enable.png'
-import iconMicActive from '../assets/mic_active.png'
+import IconBase from './IconBase.vue'
+import IconMic from './icons/IconMic.vue'
 
 export default {
   components: {
+    IconBase,
+    IconMic,
     dateSelector,
     VoiceRecorder
   },
   data () {
     return {
-      icon_mic_enable: iconMicEnable,
-      icon_mic_active: iconMicActive,
       isVoiceRecorderActive: false,
       new: false,
       currentPath: '',

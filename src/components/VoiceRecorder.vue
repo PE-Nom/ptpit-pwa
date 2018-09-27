@@ -9,11 +9,21 @@
           </div>
           <div class="modal-body">
             <canvas id="canvas" ref="canvas"></canvas>
-            <audio id="audio" ref="audio" controls></audio>
+            <b-row class='form-box'>
+              <b-col cols="8">
+                <audio id="audio" ref="audio" controls></audio>
+              </b-col>
+              <b-col cols="2">
+                <icon-base v-if="!isRecording && !isConverting && !isWaitListening" icon-color="#ff0000" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="start"/></icon-base>
+                <icon-base v-else-if="!isRecording && (isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
+                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stop"/></icon-base>
+              </b-col>
+               <b-col cols="2">
+                <icon-base v-if="audioBlob && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
+                <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
+               </b-col>
+              </b-row>
             <div>
-              <button id="start" v-if="!isRecording" v-bind:disabled="isConverting || isWaitListening" v-on:click="start">録音開始</button>
-              <button id="stop" v-else v-on:click="stop">録音終了</button>
-              <button id="replay" v-bind:disabled="!audioBlob || isWaitListening || isRecording || isConverting" v-on:click="convertBlob">変換</button>
               <p>listenig : {{listening}}</p>
             </div>
             <div>
@@ -38,6 +48,10 @@
 import stt from '../models/sttWithWebsocket.js'
 import sp from '../models/audioSignalProcessor.js'
 import ReadableBlobStream from 'readable-blob-stream'
+import IconBase from './IconBase.vue'
+import IconStartRecord from './icons/IconStartRecord.vue'
+import IconStopRecord from './icons/IconStopRecord.vue'
+import IconConvertText from './icons/IconConvertText.vue'
 
 // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
 // buffer size to balance between latency and audio quality."
@@ -51,6 +65,12 @@ const MODE_BATCH = 'batch'
 
 export default {
   name: 'VoiceRecorder',
+  components: {
+    IconBase,
+    IconStartRecord,
+    IconStopRecord,
+    IconConvertText
+  },
   data () {
     return {
       mode: MODE_REALTIME,
@@ -142,6 +162,10 @@ export default {
     cancel () {
       console.log('VoiceRecorder canceled')
       this.$emit('cancelClose')
+    },
+    // ダミーリスナー
+    nop () {
+      console.log('nop')
     },
     // 再変換開始制御
     async convertBlob () {
@@ -431,6 +455,9 @@ button {
 }
 button[disabled] {
   color: #aaa;
+}
+audio {
+  width: 100%;
 }
 @import '../style/modal.css'
 </style>

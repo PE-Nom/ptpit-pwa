@@ -6,8 +6,8 @@ export default {
   getTokenForm: {
     method: 'GET',
     // uri: 'https://192.168.10.6:8081/token'
-    // uri: 'https://192.168.1.4:8081/token'
-    uri: 'https://pitsan.nomtech-pwa.com/token'
+    uri: 'https://192.168.1.4:8081/token'
+    // uri: 'https://pitsan.nomtech-pwa.com/token'
   },
   message: {
     'action': 'start',

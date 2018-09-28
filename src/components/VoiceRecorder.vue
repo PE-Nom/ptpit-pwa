@@ -21,7 +21,7 @@
                 <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stop"/></icon-base>
               </b-col>
               <b-col cols="2">
-                <icon-base v-if="audioBlob && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
+                <icon-base v-if="audioBlob && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
                 <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
               </b-col>
             </b-row>
@@ -103,6 +103,9 @@ export default {
     }
   },
   computed: {
+    connectStatus: function () {
+      return this.$store.getters.connectStat
+    },
     transcript: function () {
       return this.$store.getters.transcript
     },
@@ -239,17 +242,21 @@ export default {
     // レコーディング開始制御
     async start () {
       if (!this.isRecording) {
-        let openingMsg = {
-          'action': 'start',
-          'content-type': 'audio/l16;rate=16000',
-          'word_confidence': false,
-          'timestamps': true,
-          'interim_results': true,
-          'word_alternatives_threshold': 0.01,
-          'inactivity_timeout': 2
+        if (this.connectStatus) {
+          let openingMsg = {
+            'action': 'start',
+            'content-type': 'audio/l16;rate=16000',
+            'word_confidence': false,
+            'timestamps': true,
+            'interim_results': true,
+            'word_alternatives_threshold': 0.01,
+            'inactivity_timeout': 2
+          }
+          await stt.wsopen(openingMsg)
+          this.isWaitListening = true
+        } else {
+          this.startRecorder()
         }
-        await stt.wsopen(openingMsg)
-        this.isWaitListening = true
       }
     },
     async startRecorder () {
@@ -271,7 +278,9 @@ export default {
     // レコーディング停止制御
     async stop () {
       if (this.isRecording) {
-        await stt.wsclose()
+        if (this.connectStatus) {
+          await stt.wsclose()
+        }
         await this.stopRecorder()
       }
     },

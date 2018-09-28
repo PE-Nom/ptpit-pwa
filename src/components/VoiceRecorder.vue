@@ -218,6 +218,8 @@ export default {
       this.isConverting = true
       this.isWaitListening = false
       this.result = ''
+      this.$store.commit('setTranscript', {transcript: ''})
+      this.$store.commit('setTranscribed', {transcribed: ''})
       // listening になったら (watch listening から呼び出す)
       // audioBlob から readStream で読み出して、stt.wssend する
       let stream = new ReadableBlobStream(this.audioBlob)
@@ -263,6 +265,8 @@ export default {
       if (!this.isRecording) {
         console.log('startRecorder')
         this.result = ''
+        this.$store.commit('setTranscript', {transcript: ''})
+        this.$store.commit('setTranscribed', {transcribed: ''})
         this.chunks = []
         this.recordlimit = false
         this.$store.commit('setTranscript', {transcript: ''})

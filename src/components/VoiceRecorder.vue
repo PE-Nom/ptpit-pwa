@@ -472,6 +472,11 @@ export default {
     this.audio = this.$refs.audio
     // stop で audioContext.close() しなければ、mounted で construct しておけばよい。
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    this.$store.commit('setTranscript', {transcript: ''})
+    this.$store.commit('setTranscribed', {transcribed: ''})
+    this.$store.commit('setListening', {listening: false})
+    this.$store.commit('setListeningCount', {listeningCount: 0})
+    this.$store.commit('setWsSendCount', {sendcnt: 0})
   }
 }
 </script>

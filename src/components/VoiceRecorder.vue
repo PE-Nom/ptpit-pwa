@@ -12,16 +12,21 @@
           </div>
           <div class="modal-body">
             <b-row class='form-box'>
-              <b-col cols="8">
+              <b-col cols="6">
                 <audio id="audio" ref="audio" controls></audio>
               </b-col>
               <b-col cols="2">
-                <icon-base v-if="!isRecording && !isConverting && !isWaitListening" icon-color="#ff0000" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="start"/></icon-base>
-                <icon-base v-else-if="!isRecording && (isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
-                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stop"/></icon-base>
+                <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="start-play"><icon-start-Play @startPlay="startPlay"/></icon-base>
+                <icon-base v-else-if="(!audioBlob || isWaitListening || isRecording || isConverting)" icon-color="#808080" width=30 height=30 icon-name="start-play"><icon-start-play @startPlay="nop"/></icon-base>
+                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-play"><icon-stop-play @stopPlay="stopPlay"/></icon-base>
               </b-col>
               <b-col cols="2">
-                <icon-base v-if="audioBlob && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
+                <icon-base v-if="!isRecording && !isPlaying && !isConverting && !isWaitListening" icon-color="#ff0000" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="startRec"/></icon-base>
+                <icon-base v-else-if="!isRecording && (isPlaying || isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
+                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
+              </b-col>
+              <b-col cols="2">
+                <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
                 <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
               </b-col>
             </b-row>
@@ -61,6 +66,8 @@ import ReadableBlobStream from 'readable-blob-stream'
 import IconBase from './IconBase.vue'
 import IconStartRecord from './icons/IconStartRecord.vue'
 import IconStopRecord from './icons/IconStopRecord.vue'
+import IconStartPlay from './icons/IconStartPlay.vue'
+import IconStopPlay from './icons/IconStopPlay.vue'
 import IconConvertText from './icons/IconConvertText.vue'
 
 // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
@@ -79,6 +86,8 @@ export default {
     IconBase,
     IconStartRecord,
     IconStopRecord,
+    IconStartPlay,
+    IconStopPlay,
     IconConvertText
   },
   data () {
@@ -88,12 +97,14 @@ export default {
       audiosource: null,
       mediaStream: null,
       isRecording: false,
+      isPlaying: false,
       isConverting: false,
       isWaitListening: false,
       chunks: [],
       audio: null,
       audioContext: null,
       audioInput: null,
+      audioElementInput: null,
       audioAnalyser: null,
       audioRecorder: null,
       audioprocesscnt: 0,
@@ -151,7 +162,7 @@ export default {
     },
     recordlimit: function (newVal, oldVal) {
       if (newVal && !oldVal) { // false -> true
-        this.stop()
+        this.stopRec()
       }
     },
     transcript: function (newVal, oldVal) {
@@ -191,7 +202,7 @@ export default {
         this.isWaitListening = false
       } else if (this.isRecording) {
         console.log('fianlize @ recording')
-        await this.stop()
+        await this.stopRec()
       } else if (this.isConverting) {
         console.log('fianlize @ converting')
         await this.stopConvert()
@@ -242,7 +253,7 @@ export default {
       this.mode = MODE_REALTIME
     },
     // レコーディング開始制御
-    async start () {
+    async startRec () {
       if (!this.isRecording) {
         if (this.connectStatus) {
           let openingMsg = {
@@ -280,7 +291,7 @@ export default {
       }
     },
     // レコーディング停止制御
-    async stop () {
+    async stopRec () {
       if (this.isRecording) {
         if (this.connectStatus) {
           await stt.wsclose()
@@ -359,7 +370,6 @@ export default {
       this.audioBlob = new Blob([view], { type: 'audio/wav' })
       this.audio.src = URL.createObjectURL(this.audioBlob)
     },
-    // Web Audio API 生成
     createRecorder () {
       console.log('createRecorder')
       // stop で audioContext.close() する場合、start で再度 construct する必要がある。
@@ -372,108 +382,133 @@ export default {
           this.audioRecorder.onaudioprocess = this.audioprocess
           this.audioInput.connect(this.audioRecorder)
           this.audioRecorder.connect(this.audioContext.destination)
-
-          // --- Audio Visualize
-          this.audioAnalyser = this.audioContext.createAnalyser()
-          this.audioInput.connect(this.audioAnalyser)
-          let canvas = this.$refs.canvas
-          let cw = canvas.width
-          let ch = canvas.height
-          let drawContext = canvas.getContext('2d')
-          let self = this
-          // --
-          /*
-          this.audioAnalyser.fftSize = 2048
-          const array = new Uint8Array(self.audioAnalyser.fftSize)
-          const barWidth = cw / self.audioAnalyser.fftSize
-          function draw () {
-            self.audioAnalyser.getByteTimeDomainData(array)
-            drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
-            drawContext.fillRect(0, 0, cw, ch)
-
-            for (let i = 0; i < self.audioAnalyser.fftSize; ++i) {
-              const value = array[i]
-              const percent = value / 255
-              const height = ch * percent
-              const offset = ch - height
-
-              drawContext.fillStyle = 'lime'
-              drawContext.fillRect(i * barWidth, offset, barWidth, 2)
-            }
-            requestAnimationFrame(draw)
-          }
-          draw()
-          */
-          // --
-          this.audioAnalyser.fftSize = 512
-          const bufferLength = this.audioAnalyser.frequencyBinCount
-          const array = new Uint8Array(bufferLength)
-          const barWidth = (cw / bufferLength) * 2.5
-
-          function renderFrame () {
-            self.audioAnalyser.getByteFrequencyData(array)
-            drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
-            drawContext.fillRect(0, 0, cw, ch)
-            let x = 0
-
-            for (var i = 0; i < bufferLength; i++) {
-              let barHeight = array[i]
-              var r = barHeight + (25 * (i / bufferLength))
-              var g = 250 * (i / bufferLength)
-              var b = 50
-              drawContext.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
-              // drawContext.fillRect(x, ch - barHeight, barWidth, barHeight)
-              drawContext.fillRect(x, ch - array[i] * ch / 255, barWidth, barHeight)
-              if (ch < barHeight) {
-                console.log('Over Ch : ' + ch + ', ' + barHeight)
-              }
-              x += barWidth + 1
-            }
-            requestAnimationFrame(renderFrame)
-          }
-          renderFrame()
-          // --
-          /*
-          this.audioAnalyser.fftSize = 2048
-          const array = new Uint8Array(self.audioAnalyser.fftSize)
-          function draw () {
-            // ask the browser to schedule a redraw before the next repaint
-            requestAnimationFrame(draw)
-
-            // clear the canvas
-            drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
-            drawContext.fillRect(0, 0, cw, ch)
-
-            drawContext.lineWidth = 2
-            drawContext.strokeStyle = '#f00'
-            drawContext.beginPath()
-
-            let sliceWidth = cw * 1.0 / self.audioAnalyser.fftSize
-            let x = 0
-
-            self.audioAnalyser.getByteTimeDomainData(array)
-
-            for (let i = 0; i < self.audioAnalyser.fftSize; i++) {
-              let v = array[i] / 128.0
-              let y = v * ch / 2
-              i === 0 ? drawContext.moveTo(x, y) : drawContext.lineTo(x, y)
-              x += sliceWidth
-            }
-            drawContext.lineTo(cw, ch / 2)
-            drawContext.stroke()
-          }
-          draw()
-          */
+          this.createAnalyser(this.audioInput)
         })
         .catch(error => {
           console.log(error)
           alert(error)
         })
+    },
+    // 再生制御
+    startPlay () {
+      console.log('startPlay')
+      this.createPlayer()
+      this.audio.play()
+      this.isPlaying = true
+    },
+    async stopPlay () {
+      console.log('stopPlay')
+      await this.audioElementInput.disconnect()
+      this.isPlaying = false
+    },
+    createPlayer () {
+      console.log('createPlayer')
+      if (!this.audioElementInput) {
+        this.audioElementInput = this.audioContext.createMediaElementSource(this.audio)
+      }
+      this.audioElementInput.connect(this.audioContext.destination)
+      this.createAnalyser(this.audioElementInput)
+    },
+    // Audio Analyser は Record と play で共通化
+    createAnalyser (audioInput) {
+      console.log('createAnalyser')
+      // --- Audio Visualize
+      this.audioAnalyser = this.audioContext.createAnalyser()
+      audioInput.connect(this.audioAnalyser)
+      let canvas = this.$refs.canvas
+      let cw = canvas.width
+      let ch = canvas.height
+      let drawContext = canvas.getContext('2d')
+      let self = this
+      // --
+      /*
+      this.audioAnalyser.fftSize = 2048
+      const array = new Uint8Array(self.audioAnalyser.fftSize)
+      const barWidth = cw / self.audioAnalyser.fftSize
+      function draw () {
+        self.audioAnalyser.getByteTimeDomainData(array)
+        drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
+        drawContext.fillRect(0, 0, cw, ch)
+
+        for (let i = 0; i < self.audioAnalyser.fftSize; ++i) {
+          const value = array[i]
+          const percent = value / 255
+          const height = ch * percent
+          const offset = ch - height
+
+          drawContext.fillStyle = 'lime'
+          drawContext.fillRect(i * barWidth, offset, barWidth, 2)
+        }
+        requestAnimationFrame(draw)
+      }
+      draw()
+      */
+      // --
+      this.audioAnalyser.fftSize = 512
+      const bufferLength = this.audioAnalyser.frequencyBinCount
+      const array = new Uint8Array(bufferLength)
+      const barWidth = (cw / bufferLength) * 2.5
+
+      function renderFrame () {
+        self.audioAnalyser.getByteFrequencyData(array)
+        drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
+        drawContext.fillRect(0, 0, cw, ch)
+        let x = 0
+
+        for (var i = 0; i < bufferLength; i++) {
+          let barHeight = array[i]
+          var r = barHeight + (25 * (i / bufferLength))
+          var g = 250 * (i / bufferLength)
+          var b = 50
+          drawContext.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+          // drawContext.fillRect(x, ch - barHeight, barWidth, barHeight)
+          drawContext.fillRect(x, ch - array[i] * ch / 255, barWidth, barHeight)
+          if (ch < barHeight) {
+            console.log('Over Ch : ' + ch + ', ' + barHeight)
+          }
+          x += barWidth + 1
+        }
+        requestAnimationFrame(renderFrame)
+      }
+      renderFrame()
+      // --
+      /*
+      this.audioAnalyser.fftSize = 2048
+      const array = new Uint8Array(self.audioAnalyser.fftSize)
+      function draw () {
+        // ask the browser to schedule a redraw before the next repaint
+        requestAnimationFrame(draw)
+
+        // clear the canvas
+        drawContext.fillStyle = 'rgba(0, 0, 0, 1)'
+        drawContext.fillRect(0, 0, cw, ch)
+
+        drawContext.lineWidth = 2
+        drawContext.strokeStyle = '#f00'
+        drawContext.beginPath()
+
+        let sliceWidth = cw * 1.0 / self.audioAnalyser.fftSize
+        let x = 0
+
+        self.audioAnalyser.getByteTimeDomainData(array)
+
+        for (let i = 0; i < self.audioAnalyser.fftSize; i++) {
+          let v = array[i] / 128.0
+          let y = v * ch / 2
+          i === 0 ? drawContext.moveTo(x, y) : drawContext.lineTo(x, y)
+          x += sliceWidth
+        }
+        drawContext.lineTo(cw, ch / 2)
+        drawContext.stroke()
+      }
+      draw()
+      */
     }
   },
   mounted () {
     console.log('VoiceRecorder mounted')
     this.audio = this.$refs.audio
+    this.audio.onended = this.stopPlay
     // stop で audioContext.close() しなければ、mounted で construct しておけばよい。
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
     this.$store.commit('setTranscript', {transcript: ''})

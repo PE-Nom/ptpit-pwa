@@ -306,6 +306,9 @@ export default {
         this.audioRecoder = null
         this.audioInput = null
         // await this.audioContext.close()
+        let track = this.mediaStream.getAudioTracks()
+        track[0].stop()
+        this.mediaStream = null
         this.isRecording = false
         // wav file 作成
         this.createWavFile(this.concatChunks(), this.audioContext.sampleRate)
@@ -463,9 +466,11 @@ export default {
           drawContext.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
           // drawContext.fillRect(x, ch - barHeight, barWidth, barHeight)
           drawContext.fillRect(x, ch - array[i] * ch / 255, barWidth, barHeight)
+          /*
           if (ch < barHeight) {
             console.log('Over Ch : ' + ch + ', ' + barHeight)
           }
+          */
           x += barWidth + 1
         }
         requestAnimationFrame(renderFrame)

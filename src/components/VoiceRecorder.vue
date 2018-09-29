@@ -37,6 +37,7 @@
               <p> AudioProcessCnt : {{audioprocesscnt}} </p>
             </div>
             -->
+            <p> AudioProcessCnt : {{audioprocesscnt}} </p>
             <p class="trans">transcript :</p>
             <div class='transcript scroll-area' ref="transcript">
               <div class='scroll_inner'>
@@ -106,7 +107,7 @@ export default {
       audioInput: null,
       audioElementInput: null,
       audioAnalyser: null,
-      audioRecorder: null,
+      audioProcessor: null,
       audioprocesscnt: 0,
       audioBlob: null,
       recordlimit: false,
@@ -208,6 +209,7 @@ export default {
         await this.stopConvert()
       }
     },
+    // ----------------
     // 再変換開始制御
     async convertBlob () {
       console.log('convertBlob')
@@ -252,6 +254,23 @@ export default {
       this.isConverting = false
       this.mode = MODE_REALTIME
     },
+    // ----------------
+    // 再生制御
+    startPlay () {
+      console.log('startPlay')
+      this.createPlayer()
+      this.audio.play()
+      this.isPlaying = true
+    },
+    async stopPlay () {
+      console.log('stopPlay')
+      await this.audioElementInput.disconnect()
+      await this.audioProcessor.disconnect()
+      this.audioProcessor = null
+      this.audioAnalyser = null
+      this.isPlaying = false
+    },
+    // ----------------
     // レコーディング開始制御
     async startRec () {
       if (!this.isRecording) {
@@ -282,8 +301,6 @@ export default {
         this.recordlimit = false
         this.$store.commit('setTranscript', {transcript: ''})
         this.$store.commit('setWsSendCount', {sendcnt: 0})
-        this.audioprocesscnt = 0
-        sp.resetProcessor()
         this.createRecorder()
         console.log('isRecording set true')
         this.isRecording = true
@@ -301,10 +318,11 @@ export default {
     },
     async stopRecorder () {
       if (this.isRecording) {
-        await this.audioRecorder.disconnect()
         await this.audioInput.disconnect()
-        this.audioRecoder = null
         this.audioInput = null
+        await this.audioProcessor.disconnect()
+        this.audioProcessor = null
+        this.audioAnalyser = null
         // await this.audioContext.close()
         let track = this.mediaStream.getAudioTracks()
         track[0].stop()
@@ -314,20 +332,7 @@ export default {
         this.createWavFile(this.concatChunks(), this.audioContext.sampleRate)
       }
     },
-    // 音声信号処理
-    audioprocess (e) {
-      this.audioprocesscnt++
-      let source = e.inputBuffer.getChannelData(0)
-      let buffer = sp.downSample(source, this.audioContext.sampleRate)
-      let data = sp.floatTo16BitPCM(null, 0, buffer)
-      stt.wssend(data)
-      //  レコーディング
-      let chunk = source.slice()
-      this.chunks.push(chunk)
-      if (this.audioprocesscnt > TIME_OUT_VAL) {
-        this.recordlimit = true
-      }
-    },
+    // ----------------
     // wav file 作成
     concatChunks () {
       console.log('concatChunks')
@@ -373,6 +378,17 @@ export default {
       this.audioBlob = new Blob([view], { type: 'audio/wav' })
       this.audio.src = URL.createObjectURL(this.audioBlob)
     },
+    // プレーヤー
+    createPlayer () {
+      console.log('createPlayer')
+      if (!this.audioElementInput) {
+        this.audioElementInput = this.audioContext.createMediaElementSource(this.audio)
+      }
+      this.createAudioProcessor(this.audioElementInput)
+      this.createAudioAnalyser(this.audioElementInput)
+      this.audioElementInput.connect(this.audioContext.destination)
+    },
+    // レコーディング
     createRecorder () {
       console.log('createRecorder')
       // stop で audioContext.close() する場合、start で再度 construct する必要がある。
@@ -381,40 +397,41 @@ export default {
         .then(stream => {
           this.mediaStream = stream
           this.audioInput = this.audioContext.createMediaStreamSource(stream)
-          this.audioRecorder = this.audioContext.createScriptProcessor(bufferSize, 1, 1)
-          this.audioRecorder.onaudioprocess = this.audioprocess
-          this.audioInput.connect(this.audioRecorder)
-          this.audioRecorder.connect(this.audioContext.destination)
-          this.createAnalyser(this.audioInput)
+          this.createAudioProcessor(this.audioInput)
+          this.createAudioAnalyser(this.audioInput)
         })
         .catch(error => {
           console.log(error)
           alert(error)
         })
     },
-    // 再生制御
-    startPlay () {
-      console.log('startPlay')
-      this.createPlayer()
-      this.audio.play()
-      this.isPlaying = true
-    },
-    async stopPlay () {
-      console.log('stopPlay')
-      await this.audioElementInput.disconnect()
-      this.isPlaying = false
-    },
-    createPlayer () {
-      console.log('createPlayer')
-      if (!this.audioElementInput) {
-        this.audioElementInput = this.audioContext.createMediaElementSource(this.audio)
+    // Audio Processor は Record と play で共通化
+    // 音声信号処理
+    audioprocess (e) {
+      this.audioprocesscnt++
+      let source = e.inputBuffer.getChannelData(0)
+      let buffer = sp.downSample(source, this.audioContext.sampleRate)
+      let data = sp.floatTo16BitPCM(null, 0, buffer)
+      stt.wssend(data)
+      //  レコーディング
+      let chunk = source.slice()
+      this.chunks.push(chunk)
+      if (this.audioprocesscnt > TIME_OUT_VAL) {
+        this.recordlimit = true
       }
-      this.audioElementInput.connect(this.audioContext.destination)
-      this.createAnalyser(this.audioElementInput)
+    },
+    createAudioProcessor (audioInput) {
+      console.log('createAudioProcessor')
+      this.audioprocesscnt = 0
+      sp.resetProcessor()
+      this.audioProcessor = this.audioContext.createScriptProcessor(bufferSize, 1, 1)
+      this.audioProcessor.onaudioprocess = this.audioprocess
+      audioInput.connect(this.audioProcessor)
+      this.audioProcessor.connect(this.audioContext.destination)
     },
     // Audio Analyser は Record と play で共通化
-    createAnalyser (audioInput) {
-      console.log('createAnalyser')
+    createAudioAnalyser (audioInput) {
+      console.log('createAudioAnalyser')
       // --- Audio Visualize
       this.audioAnalyser = this.audioContext.createAnalyser()
       audioInput.connect(this.audioAnalyser)

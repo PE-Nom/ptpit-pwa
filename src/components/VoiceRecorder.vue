@@ -12,20 +12,22 @@
           </div>
           <div class="modal-body">
             <b-row class='form-box'>
+              <!--
               <b-col cols="6">
                 <audio id="audio" ref="audio" controls></audio>
               </b-col>
-              <b-col cols="2">
+              -->
+              <b-col cols="4">
                 <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="start-play"><icon-start-Play @startPlay="startPlay"/></icon-base>
                 <icon-base v-else-if="(!audioBlob || isWaitListening || isRecording || isConverting)" icon-color="#808080" width=30 height=30 icon-name="start-play"><icon-start-play @startPlay="nop"/></icon-base>
                 <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-play"><icon-stop-play @stopPlay="stopPlay"/></icon-base>
               </b-col>
-              <b-col cols="2">
+              <b-col cols="4">
                 <icon-base v-if="!isRecording && !isPlaying && !isConverting && !isWaitListening" icon-color="#ff0000" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="startRec"/></icon-base>
                 <icon-base v-else-if="!isRecording && (isPlaying || isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
                 <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
               </b-col>
-              <b-col cols="2">
+              <b-col cols="4">
                 <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
                 <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
               </b-col>
@@ -258,16 +260,22 @@ export default {
     // 再生制御
     startPlay () {
       console.log('startPlay')
+      this.audio = document.createElement('audio')
+      this.audio.src = URL.createObjectURL(this.audioBlob)
+      this.audio.onended = this.stopPlay
       this.createPlayer()
       this.audio.play()
       this.isPlaying = true
     },
     async stopPlay () {
       console.log('stopPlay')
+      this.audio.pause()
       await this.audioElementInput.disconnect()
+      this.audioElementInput = null
       await this.audioProcessor.disconnect()
       this.audioProcessor = null
       this.audioAnalyser = null
+      this.audio.remove()
       this.isPlaying = false
     },
     // ----------------
@@ -376,7 +384,6 @@ export default {
       sp.floatTo16BitPCM(view, 44, samples) // 波形データ
 
       this.audioBlob = new Blob([view], { type: 'audio/wav' })
-      this.audio.src = URL.createObjectURL(this.audioBlob)
     },
     // プレーヤー
     createPlayer () {
@@ -529,8 +536,8 @@ export default {
   },
   mounted () {
     console.log('VoiceRecorder mounted')
-    this.audio = this.$refs.audio
-    this.audio.onended = this.stopPlay
+    // this.audio = this.$refs.audio
+    // this.audio.onended = this.stopPlay
     // stop で audioContext.close() しなければ、mounted で construct しておけばよい。
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
     this.$store.commit('setTranscript', {transcript: ''})

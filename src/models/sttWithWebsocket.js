@@ -89,13 +89,11 @@ export default {
     this.wssendcnt = 0
   },
   setTranscript (results) {
-    console.log('setTranscript results.length : ' + results.length)
-    console.log(results)
     let length = results[0].alternatives.length
     let transcript = results[0].alternatives[length - 1].transcript
     store.commit('setTranscript', {transcript: transcript})
-    console.log('results[0].final : ' + results[0].final)
     if (results[0].final) {
+      console.log(results)
       store.commit('setTranscribed', {transcribed: transcript})
     }
   },

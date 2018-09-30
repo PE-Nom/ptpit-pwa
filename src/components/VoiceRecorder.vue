@@ -166,6 +166,7 @@ export default {
     },
     recordlimit: function (newVal, oldVal) {
       if (newVal && !oldVal) { // false -> true
+        console.log('watch recordlimit call stopRec')
         this.stopRec()
       }
     },
@@ -321,11 +322,16 @@ export default {
       if (this.isRecording) {
         if (this.connectStatus) {
           await stt.wsclose()
+        } else {
+          // WebSocket connected の場合は watch から
+          // listening modeの変換を検知してstopRecorder を呼びだす
+          // connected でなければ即、stopRecorderを呼び出す
+          await this.stopRecorder()
         }
-        await this.stopRecorder()
       }
     },
     async stopRecorder () {
+      console.log('stopRecorder : ' + this.isRecording)
       if (this.isRecording) {
         await this.audioInput.disconnect()
         this.audioInput = null
@@ -425,6 +431,7 @@ export default {
       let chunk = source.slice()
       this.chunks.push(chunk)
       if (this.audioprocesscnt > TIME_OUT_VAL) {
+        console.log('recordlimit occured')
         this.recordlimit = true
       }
     },
@@ -550,7 +557,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 canvas {
   width: 100%;
   height: 128px

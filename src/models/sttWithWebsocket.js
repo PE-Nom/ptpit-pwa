@@ -80,10 +80,8 @@ export default {
       this.ws.onclose = function (evt) {
         console.log('onclose event')
         console.log(evt)
-        if (this.connected) {
-          this.setListening(false)
-          this.connected = false
-        }
+        this.setListening(false)
+        this.connected = false
       }.bind(this)
     }
     this.wssendcnt = 0
@@ -98,6 +96,7 @@ export default {
     }
   },
   setListening (mode) {
+    console.log('setListening : ' + mode)
     store.commit('setListening', {listening: mode})
   },
   resetListeningCount () {
@@ -128,11 +127,10 @@ export default {
     }
   },
   wsclose () {
+    console.log('wsclose')
     if (this.connected && this.ws.readyState === 1) {
       let closingMessage = { action: 'stop' }
       this.wssend(JSON.stringify(closingMessage))
-      this.setListening(false)
-      this.connected = false
       this.ws.close()
     }
   }

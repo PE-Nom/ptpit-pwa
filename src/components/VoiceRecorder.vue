@@ -573,13 +573,15 @@ audio {
   width: 100%;
   height: 2.5em;
   overflow: auto;
-  border:#8db8ff solid 1px;
+  border:rgba(63, 63, 63, 0.1) solid 1px;
+  box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
 }
 .result.scroll-area {
   width: 100%;
   height: 4.5em;
   overflow: auto;
-  border:#8db8ff solid 1px;
+  border:rgba(63, 63, 63, 0.1) solid 1px;
+  box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
 }
 .scroll-inner {
   height: auto;

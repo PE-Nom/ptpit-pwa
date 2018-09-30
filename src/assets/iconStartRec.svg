@@ -5,11 +5,11 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   id="svg4499"
-   version="1.1"
-   viewBox="0 0 18 18"
+   width="18"
    height="18"
-   width="18">
+   viewBox="0 0 18 18"
+   version="1.1"
+   id="svg4499">
   <defs
      id="defs4493" />
   <metadata
@@ -25,14 +25,18 @@
     </rdf:RDF>
   </metadata>
   <path
-     id="path5044"
-     d="M 17.526316,9 A 8.5263157,8.5263157 0 0 1 9,17.526316 8.5263157,8.5263157 0 0 1 0.47368431,9 8.5263157,8.5263157 0 0 1 9,0.47368431 8.5263157,8.5263157 0 0 1 17.526316,9 Z"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:0.94736844;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+     id="path4704"
+     d="M 17.9,9 A 8.8999996,8.8999996 0 0 1 9,17.9 8.8999996,8.8999996 0 0 1 0.10000038,9 8.8999996,8.8999996 0 0 1 9,0.10000038 8.8999996,8.8999996 0 0 1 17.9,9 Z"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.72900009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <path
-     id="path5046"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:0.94736844;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     d="M 17.526316,9 A 8.5263157,8.5263157 0 0 1 9,17.526316 8.5263157,8.5263157 0 0 1 0.47368431,9 8.5263157,8.5263157 0 0 1 9,0.47368431 8.5263157,8.5263157 0 0 1 17.526316,9 Z"
+     id="path5044" />
+  <path
+     style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1.34095681;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      d="M 14.684308,9 A 5.6843076,5.6842079 0 0 1 9,14.684208 5.6843076,5.6842079 0 0 1 3.3156924,9 5.6843076,5.6842079 0 0 1 9,3.3157921 5.6843076,5.6842079 0 0 1 14.684308,9 Z"
-     style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1.34095681;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+     id="path5046" />
   <g
-     transform="translate(0,-292.23748)"
-     id="layer1" />
+     id="layer1"
+     transform="translate(0,-292.23748)" />
 </svg>

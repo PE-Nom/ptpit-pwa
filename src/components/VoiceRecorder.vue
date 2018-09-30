@@ -27,8 +27,9 @@
                   <icon-base class='operations' v-else icon-color="#ff0000" width=50 height=50 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
                 </b-col>
                 <b-col cols="4">
-                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=40 height=40 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
-                  <icon-base class='operations' v-else icon-color="#808080" width=40 height=40 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
+                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=40 height=40 icon-name="start-convert"><icon-start-convert @startConvert="startConvert('batch')"/></icon-base>
+                  <icon-base class='operations' v-else-if="!audioBlob || isPlaying || isWaitListening || isRecording || !connectStatus" icon-color="#808080" width=40 height=40 icon-name="start-convert"><icon-start-convert @startConvert="nop"/></icon-base>
+                  <icon-base class='operations' v-else icon-color="#ff0000" width=40 height=40 icon-name="stop-convert"><icon-stop-convert @stopConvert="stopConvert"/></icon-base>
                 </b-col>
               </b-row>
             </div>
@@ -72,7 +73,8 @@ import IconStartRecord from './icons/IconStartRecord.vue'
 import IconStopRecord from './icons/IconStopRecord.vue'
 import IconStartPlay from './icons/IconStartPlay.vue'
 import IconStopPlay from './icons/IconStopPlay.vue'
-import IconConvertText from './icons/IconConvertText.vue'
+import IconStartConvert from './icons/IconStartConvert.vue'
+import IconStopConvert from './icons/IconStopConvert.vue'
 
 // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
 // buffer size to balance between latency and audio quality."
@@ -92,7 +94,8 @@ export default {
     IconStopRecord,
     IconStartPlay,
     IconStopPlay,
-    IconConvertText
+    IconStartConvert,
+    IconStopConvert
   },
   data () {
     return {
@@ -150,7 +153,7 @@ export default {
           this.startRecorder()
         } else if (this.mode === MODE_BATCH) {
           console.log('listening() computed value is changed false -> true in Batch')
-          this.startConvert()
+          this.startConverter()
         } else {
           console.log('!!!!!!')
         }
@@ -215,8 +218,8 @@ export default {
     },
     // ----------------
     // 再変換開始制御
-    async convertBlob () {
-      console.log('convertBlob')
+    async startConvert (mode) {
+      console.log('startConvert : ' + mode)
       if (!this.isRecording) {
         this.mode = MODE_BATCH
         let openingMsg = {
@@ -230,7 +233,7 @@ export default {
         this.isWaitListening = true
       }
     },
-    async startConvert () {
+    async startConverter () {
       console.log('startConvert')
       this.isConverting = true
       this.isWaitListening = false

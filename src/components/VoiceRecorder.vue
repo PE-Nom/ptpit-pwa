@@ -7,39 +7,40 @@
             <h5>音声メモ</h5>
             <h5 @click='cancel'>×</h5>
           </div>
-          <div>
+          <div class="panel">
             <canvas id="canvas" ref="canvas"></canvas>
-          </div>
-          <div class="modal-body">
-            <b-row class='form-box'>
-              <!--
-              <b-col cols="6">
-                <audio id="audio" ref="audio" controls></audio>
-              </b-col>
-              -->
-              <b-col cols="4">
-                <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=30 height=30 icon-name="start-play"><icon-start-Play @startPlay="startPlay"/></icon-base>
-                <icon-base v-else-if="(!audioBlob || isWaitListening || isRecording || isConverting)" icon-color="#808080" width=30 height=30 icon-name="start-play"><icon-start-play @startPlay="nop"/></icon-base>
-                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-play"><icon-stop-play @stopPlay="stopPlay"/></icon-base>
-              </b-col>
-              <b-col cols="4">
-                <icon-base v-if="!isRecording && !isPlaying && !isConverting && !isWaitListening" icon-color="#ff0000" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="startRec"/></icon-base>
-                <icon-base v-else-if="!isRecording && (isPlaying || isConverting || isWaitListening)" icon-color="#808080" width=30 height=30 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
-                <icon-base v-else icon-color="#ff0000" width=30 height=30 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
-              </b-col>
-              <b-col cols="4">
-                <icon-base v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
-                <icon-base v-else icon-color="#808080" width=30 height=30 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
-              </b-col>
-            </b-row>
-            <!--
             <div>
-              <p>listenig : {{listening}}</p>
-              <p> WsSendCount : {{wssendcnt}} </p>
-              <p> AudioProcessCnt : {{audioprocesscnt}} </p>
+              <b-row class='form-box'>
+                <!--
+                <b-col cols="6">
+                  <audio id="audio" ref="audio" controls></audio>
+                </b-col>
+                -->
+                <b-col cols="4">
+                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting" icon-color="#ff0000" width=40 height=40 icon-name="start-play"><icon-start-Play @startPlay="startPlay"/></icon-base>
+                  <icon-base class='operations' v-else-if="(!audioBlob || isWaitListening || isRecording || isConverting)" icon-color="#808080" width=40 height=40 icon-name="start-play"><icon-start-play @startPlay="nop"/></icon-base>
+                  <icon-base class='operations' v-else icon-color="#ff0000" width=40 height=40 icon-name="stop-play"><icon-stop-play @stopPlay="stopPlay"/></icon-base>
+                </b-col>
+                <b-col cols="4">
+                  <icon-base class='operations' v-if="!isRecording && !isPlaying && !isConverting && !isWaitListening" icon-color="#ff0000" width=50 height=50 icon-name="start-record"><icon-start-record @startRec="startRec"/></icon-base>
+                  <icon-base class='operations' v-else-if="!isRecording && (isPlaying || isConverting || isWaitListening)" icon-color="#808080" width=50 height=50 icon-name="start-record"><icon-start-record @startRec="nop"/></icon-base>
+                  <icon-base class='operations' v-else icon-color="#ff0000" width=50 height=50 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
+                </b-col>
+                <b-col cols="4">
+                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=40 height=40 icon-name="convert-text"><icon-convert-text @startConvert="convertBlob"/></icon-base>
+                  <icon-base class='operations' v-else icon-color="#808080" width=40 height=40 icon-name="convert-text"><icon-convert-text @startConvert="nop"/></icon-base>
+                </b-col>
+              </b-row>
             </div>
-            -->
+          </div>
+          <!--
+          <div>
+            <p>listenig : {{listening}}</p>
+            <p> WsSendCount : {{wssendcnt}} </p>
             <p> AudioProcessCnt : {{audioprocesscnt}} </p>
+          </div>
+          -->
+          <div class="modal-body">
             <p class="trans">transcript :</p>
             <div class='transcript scroll-area' ref="transcript">
               <div class='scroll_inner'>
@@ -586,6 +587,19 @@ audio {
 .trans {
   margin-top: 0.5rem;
   margin-bottom: 0rem;
+}
+.panel {
+  background-color: #3f3f3f;
+}
+.form-box {
+  height: 64px
+}
+.operations {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  -webkit-transform: translateY(-50%) translateX(-50%);
 }
 @import '../style/modal.css'
 </style>

@@ -3,7 +3,7 @@
   <path v-on:click="clicked"
      id="path5254"
      d="M 17.861001,9.0839996 A 8.8500004,8.8500004 0 0 1 9.0110006,17.934 8.8500004,8.8500004 0 0 1 0.16100025,9.0839996 8.8500004,8.8500004 0 0 1 9.0110006,0.23399925 8.8500004,8.8500004 0 0 1 17.861001,9.0839996 Z"
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.72900009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:#3f3f3f;fill-opacity:1;stroke:none;stroke-width:2.72900009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <path v-on:click="clicked"
      id="path5603"
      d="M 17.496948,9.0689993 A 8.4789476,8.4789476 0 0 1 9.0180006,17.547947 8.4789476,8.4789476 0 0 1 0.53905296,9.0689993 8.4789476,8.4789476 0 0 1 9.0180006,0.59005165 8.4789476,8.4789476 0 0 1 17.496948,9.0689993 Z"

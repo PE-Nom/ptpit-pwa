@@ -27,7 +27,7 @@
                   <icon-base class='operations' v-else icon-color="#ff0000" width=50 height=50 icon-name="stop-record"><icon-stop-record @stopRec="stopRec"/></icon-base>
                 </b-col>
                 <b-col cols="4">
-                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=40 height=40 icon-name="start-convert"><icon-start-convert @startConvert="startConvert('batch')"/></icon-base>
+                  <icon-base class='operations' v-if="audioBlob && !isPlaying && !isWaitListening && !isRecording && !isConverting && connectStatus" icon-color="#ff0000" width=40 height=40 icon-name="start-convert"><icon-start-convert @startConvert="startConvert('realtime')"/></icon-base>
                   <icon-base class='operations' v-else-if="!audioBlob || isPlaying || isWaitListening || isRecording || !connectStatus" icon-color="#808080" width=40 height=40 icon-name="start-convert"><icon-start-convert @startConvert="nop"/></icon-base>
                   <icon-base class='operations' v-else icon-color="#ff0000" width=40 height=40 icon-name="stop-convert"><icon-stop-convert @stopConvert="stopConvert"/></icon-base>
                 </b-col>
@@ -88,6 +88,7 @@ const MODE_BATCH = 'batch'
 
 export default {
   name: 'VoiceRecorder',
+  listeningAction: null,
   components: {
     IconBase,
     IconStartRecord,
@@ -142,17 +143,31 @@ export default {
   },
   watch: {
     listening: function (newVal, oldVal) {
-      if (!newVal && oldVal && this.isRecording) {
-        console.log('listening() computed value is changed true -> false')
-        this.stopRecorder()
-      } else if (newVal && !oldVal && !this.isRecording) {
+      if (!newVal && oldVal) {
+        // listening true -> false
+        if (this.isRecording && !this.isConverting) {
+          console.log('listening() computed value is changed true -> false in Recording')
+          this.stopRecorder()
+        } else if (!this.isRecording && this.isConverting) {
+          console.log('listening() computed value is changed true -> false in Converting')
+          this.stopConverter()
+        }
+      } else if (newVal && !oldVal) {
+        // listening false -> true
         console.log(' listening change false -> true')
-        console.log('this.mode : ' + this.mode)
         if (this.mode === MODE_REALTIME) {
-          console.log('listening() computed value is changed false -> true in RealTime')
-          this.startRecorder()
+          this.listeningAction()
+          /*
+          if () {
+            console.log('listening() computed value is changed false -> true in RealTime for Recorder')
+            this.startRecorder()
+          } else {
+            console.log('listening() computed value is changed false -> true in RealTime for Converter')
+            this.startConverter()
+          }
+          */
         } else if (this.mode === MODE_BATCH) {
-          console.log('listening() computed value is changed false -> true in Batch')
+          console.log('listening() computed value is changed false -> true in Batch for Converter')
           this.startConverter()
         } else {
           console.log('!!!!!!')
@@ -220,46 +235,83 @@ export default {
     // 再変換開始制御
     async startConvert (mode) {
       console.log('startConvert : ' + mode)
-      if (!this.isRecording) {
+      let openingMsg = ''
+      if (mode === MODE_BATCH) {
         this.mode = MODE_BATCH
-        let openingMsg = {
+        openingMsg = {
           'action': 'start',
           'content-type': 'audio/wav',
           'interim_results': true,
           'continuous': true,
           'inactivity_timeout': -1
         }
-        await stt.wsopen(openingMsg)
-        this.isWaitListening = true
+      } else {
+        openingMsg = {
+          'action': 'start',
+          'content-type': 'audio/l16;rate=16000',
+          'word_confidence': false,
+          'timestamps': true,
+          'interim_results': true,
+          'word_alternatives_threshold': 0.01,
+          'inactivity_timeout': 2
+        }
       }
+      await stt.wsopen(openingMsg)
+      this.listeningAction = this.startConverter
+      this.isWaitListening = true
     },
     async startConverter () {
-      console.log('startConvert')
-      this.isConverting = true
-      this.isWaitListening = false
+      console.log('startConverter')
       this.result = ''
+      this.chunks = []
+      this.recordlimit = false
       this.$store.commit('setTranscript', {transcript: ''})
       this.$store.commit('setTranscribed', {transcribed: ''})
-      // listening になったら (watch listening から呼び出す)
-      // audioBlob から readStream で読み出して、stt.wssend する
-      let stream = new ReadableBlobStream(this.audioBlob)
-      stream.on('error', error => {
-        console.log('error with reading audioBlob')
-        console.log(error)
-      })
-      stream.on('data', data => {
-        console.log('read data from audioBlob ')
-        stt.wssend(data)
-      })
-      stream.on('end', () => {
-        console.log('read end from audioBlob')
-        stt.wssend(Buffer.alloc(0), {binary: true, mask: true})
-      })
+      this.$store.commit('setWsSendCount', {sendcnt: 0})
+      if (this.mode === MODE_BATCH) {
+        // listening になったら (watch listening から呼び出す)
+        // audioBlob から readStream で読み出して、stt.wssend する
+        let stream = new ReadableBlobStream(this.audioBlob)
+        stream.on('error', error => {
+          console.log('error with reading audioBlob')
+          console.log(error)
+        })
+        stream.on('data', data => {
+          console.log('read data from audioBlob ')
+          stt.wssend(data)
+        })
+        stream.on('end', () => {
+          console.log('read end from audioBlob')
+          stt.wssend(Buffer.alloc(0), {binary: true, mask: true})
+        })
+      } else {
+        this.audio = document.createElement('audio')
+        this.audio.src = URL.createObjectURL(this.audioBlob)
+        this.audio.onended = this.stopConvert
+        this.createPlayer()
+        this.audio.play()
+      }
+      this.isConverting = true
+      this.isWaitListening = false
     },
     async stopConvert () {
+      console.log('stopConvert')
       await stt.wsclose()
+    },
+    async stopConverter () {
+      console.log('stopConverter')
+      if (this.mode === MODE_BATCH) {
+        this.mode = MODE_REALTIME
+      } else {
+        this.audio.pause()
+        await this.audioElementInput.disconnect()
+        this.audioElementInput = null
+        await this.audioProcessor.disconnect()
+        this.audioProcessor = null
+        this.audioAnalyser = null
+        this.audio.remove()
+      }
       this.isConverting = false
-      this.mode = MODE_REALTIME
     },
     // ----------------
     // 再生制御
@@ -286,22 +338,21 @@ export default {
     // ----------------
     // レコーディング開始制御
     async startRec () {
-      if (!this.isRecording) {
-        if (this.connectStatus) {
-          let openingMsg = {
-            'action': 'start',
-            'content-type': 'audio/l16;rate=16000',
-            'word_confidence': false,
-            'timestamps': true,
-            'interim_results': true,
-            'word_alternatives_threshold': 0.01,
-            'inactivity_timeout': 2
-          }
-          await stt.wsopen(openingMsg)
-          this.isWaitListening = true
-        } else {
-          this.startRecorder()
+      if (this.connectStatus) {
+        let openingMsg = {
+          'action': 'start',
+          'content-type': 'audio/l16;rate=16000',
+          'word_confidence': false,
+          'timestamps': true,
+          'interim_results': true,
+          'word_alternatives_threshold': 0.01,
+          'inactivity_timeout': 2
         }
+        await stt.wsopen(openingMsg)
+        this.listeningAction = this.startRecorder
+        this.isWaitListening = true
+      } else {
+        this.startRecorder()
       }
     },
     async startRecorder () {

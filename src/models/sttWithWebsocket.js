@@ -5,8 +5,8 @@ export default {
   wsURI: 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=[TOKEN]&model=ja-JP_BroadbandModel&x-watson-learning-opt-out=1',
   getTokenForm: {
     method: 'GET',
-    // uri: 'https://192.168.1.4:8081/token'
-    uri: 'https://192.168.10.6:8081/token'
+    uri: 'https://192.168.1.4:8081/token'
+    // uri: 'https://192.168.10.6:8081/token'
     // uri: 'https://pitsan.nomtech-pwa.com/token'
   },
   message: {
@@ -45,7 +45,7 @@ export default {
       this.resetListeningCount()
       this.ws.onmessage = function (evt) {
         console.log('onmessage event')
-        // console.log(evt.data)
+        console.log(evt.data)
         let data = JSON.parse(evt.data)
         if (data.state) {
           if (data.state === 'listening') {
@@ -56,6 +56,9 @@ export default {
         }
         if (data.results) {
           this.setTranscript(data.results)
+        }
+        if (data.error) {
+          alert(data.error)
         }
       }.bind(this)
       this.ws.onerror = function (evt) {
@@ -112,9 +115,9 @@ export default {
   setListeningCount () {
     store.commit('setListeningCount', {listeningCount: this.listeningCount})
   },
-  wssend (chunk) {
+  async wssend (chunk) {
     if (this.connected && this.ws.readyState === 1) {
-      this.ws.send(chunk, {
+      await this.ws.send(chunk, {
         binary: true,
         // mask: false,
         mask: true
@@ -126,12 +129,12 @@ export default {
       }
     }
   },
-  wsclose () {
+  async wsclose () {
     console.log('wsclose')
     if (this.connected && this.ws.readyState === 1) {
       let closingMessage = { action: 'stop' }
-      this.wssend(JSON.stringify(closingMessage))
-      this.ws.close()
+      await this.wssend(JSON.stringify(closingMessage))
+      await this.ws.close()
     }
   }
 }

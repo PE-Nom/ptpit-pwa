@@ -3,8 +3,8 @@ import axios from 'axios'
 // const BASE_URL = 'http://192.168.1.4:8081' // @ Office
 // const BASE_URL = 'http://192.168.10.6:8081' // @ home
 
-// const BASE_URL = 'https://192.168.1.4:8081' // @office on dell over https
-const BASE_URL = 'https://192.168.10.6:8081' // @home on dell over https
+const BASE_URL = 'https://192.168.1.4:8081' // @office on dell over https
+// const BASE_URL = 'https://192.168.10.6:8081' // @home on dell over https
 
 // const BASE_URL = 'https://www.nomtech-pwa.com/' // @ AWS
 // const BASE_URL = 'https://pitsan.nomtech-pwa.com/' // @ AWS

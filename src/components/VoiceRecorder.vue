@@ -36,9 +36,7 @@
           </div>
           <!--
           <div>
-            <p>listenig : {{listening}}</p>
-            <p> WsSendCount : {{wssendcnt}} </p>
-            <p> AudioProcessCnt : {{audioprocesscnt}} </p>
+          <p>listenig : {{listening}}<br>WsSendCount : {{wssendcnt}} <br>AudioProcessCnt : {{audioprocesscnt}} </p>
           </div>
           -->
           <div class="modal-body">
@@ -246,6 +244,10 @@ export default {
           'inactivity_timeout': -1
         }
       } else {
+        this.audio = document.createElement('audio')
+        this.audio.src = URL.createObjectURL(this.audioBlob)
+        this.audio.onended = this.stopConvert
+        this.createPlayer()
         openingMsg = {
           'action': 'start',
           'content-type': 'audio/l16;rate=16000',
@@ -285,10 +287,6 @@ export default {
           stt.wssend(Buffer.alloc(0), {binary: true, mask: true})
         })
       } else {
-        this.audio = document.createElement('audio')
-        this.audio.src = URL.createObjectURL(this.audioBlob)
-        this.audio.onended = this.stopConvert
-        this.createPlayer()
         this.audio.play()
       }
       this.isConverting = true
@@ -475,12 +473,12 @@ export default {
     },
     // Audio Processor は Record と play で共通化
     // 音声信号処理
-    audioprocess (e) {
+    async audioprocess (e) {
       this.audioprocesscnt++
       let source = e.inputBuffer.getChannelData(0)
       let buffer = sp.downSample(source, this.audioContext.sampleRate)
       let data = sp.floatTo16BitPCM(null, 0, buffer)
-      stt.wssend(data)
+      await stt.wssend(data)
       //  レコーディング
       let chunk = source.slice()
       this.chunks.push(chunk)

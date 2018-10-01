@@ -3,8 +3,8 @@ import axios from 'axios'
 // const BASE_URL = 'http://192.168.1.4:3001/' // @office
 // const BASE_URL = 'http://192.168.10.6:3001' // @home on let's note
 
-// const BASE_URL = 'https://192.168.1.4/redmine' // @office on dell over https
-const BASE_URL = 'https://192.168.10.6/redmine' // @home on Let's-note over https
+const BASE_URL = 'https://192.168.1.4/redmine' // @office on dell over https
+// const BASE_URL = 'https://192.168.10.6/redmine' // @home on Let's-note over https
 
 // const BASE_URL = 'https://www.nomtech-pwa.com/redmine' // @AWS
 // const BASE_URL = 'https://pitsan.nomtech-pwa.com/redmine' // @AWS

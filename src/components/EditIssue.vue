@@ -28,7 +28,7 @@
                         <label for="inputSubject" class="control-label">件名</label>
                       </b-col>
                       <b-col cols="2">
-                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('subject')"/></icon-base>
                       </b-col>
                     </b-row>
                     <input type="text" class="form-control" id="inputSubject" placeholder="題名" v-model="subject">
@@ -57,7 +57,7 @@
                         <label for="inputDescription" class="control-label">指摘内容</label>
                       </b-col>
                       <b-col cols="2">
-                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('description')"/></icon-base>
                       </b-col>
                     </b-row>
                     <textarea class="form-control" rows="3" id="inputDescription" placeholder="指摘の記述" v-model="description"></textarea>
@@ -121,7 +121,7 @@
                                 <label for="inputNotaion" class="control-label">コメント</label>
                             </b-col>
                             <b-col cols="2">
-                              <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                              <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('notation')"/></icon-base>
                             </b-col>
                           </b-row>
                           <textarea class="form-control" rows="3" id="inputNotation" v-model="notation"></textarea>
@@ -153,7 +153,7 @@
                             <label for="inputImageDescription" class="control-label">画像の説明</label>
                           </b-col>
                           <b-col cols="2">
-                            <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording"/></icon-base>
+                            <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('imageDescription')"/></icon-base>
                           </b-col>
                         </b-row>
                         <textarea class="form-control" rows="3" id="inputImageDescription" placeholder="画像の説明記述" v-model="imageDescription"></textarea>
@@ -314,7 +314,8 @@ export default {
       uploading: false,
       imageDescription: '',
       creating: false,
-      updating: false
+      updating: false,
+      target: null
     }
   },
   computed: {
@@ -350,13 +351,25 @@ export default {
     // }
   },
   methods: {
-    recording () {
+    recording (target) {
       console.log('recording')
+      this.target = target
       this.isVoiceRecorderActive = true
     },
-    submitClose () {
+    submitClose (result) {
       console.log('VoiceRecorder submitted')
       this.isVoiceRecorderActive = false
+      console.log('result : ' + result.text)
+      console.log(result.audio)
+      if (this.target === 'subject') {
+        this.subject = result.text
+      } else if (this.target === 'description') {
+        this.description = result.text
+      } else if (this.target === 'notation') {
+        this.notation = result.text
+      } else if (this.target === 'imageDescription') {
+        this.imageDescription = result.text
+      }
     },
     cancelClose () {
       console.log('VoiceRecorder canceled')

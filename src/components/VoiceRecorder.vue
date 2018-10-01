@@ -54,7 +54,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type='button' class="btn btn-default" @click='submit'>確定</button>
+            <button type='button' class="btn btn-default" v-bind:disabled="result==='' || !audioBlob || isPlaying || isWaitListening || isRecording || isConverting" @click='submit'>確定</button>
           </div>
         </div>
       </div>
@@ -116,6 +116,7 @@ export default {
       audioprocesscnt: 0,
       audioBlob: null,
       recordlimit: false,
+      cancelWait: false,
       result: ''
     }
   },
@@ -155,15 +156,6 @@ export default {
         console.log(' listening change false -> true')
         if (this.mode === MODE_REALTIME) {
           this.listeningAction()
-          /*
-          if () {
-            console.log('listening() computed value is changed false -> true in RealTime for Recorder')
-            this.startRecorder()
-          } else {
-            console.log('listening() computed value is changed false -> true in RealTime for Converter')
-            this.startConverter()
-          }
-          */
         } else if (this.mode === MODE_BATCH) {
           console.log('listening() computed value is changed false -> true in Batch for Converter')
           this.startConverter()
@@ -182,8 +174,10 @@ export default {
     },
     recordlimit: function (newVal, oldVal) {
       if (newVal && !oldVal) { // false -> true
-        console.log('watch recordlimit call stopRec')
-        this.stopRec()
+        if (this.isRecording) {
+          console.log('watch recordlimit call stopRec')
+          this.stopRec()
+        }
       }
     },
     transcript: function (newVal, oldVal) {
@@ -198,18 +192,33 @@ export default {
       }
       this.$refs.result.scrollTop = this.$refs.result.scrollHeight
       console.log('result : ' + this.result)
+    },
+    // 再生変換中のキャンセルでstopConverter終了後にcancelCoseさせるための処置
+    isConverting: function (newVal, oldVal) {
+      if (!newVal && oldVal && this.cancelWait) {
+        this.$emit('cancelClose')
+      }
+    },
+    // 録音中のキャンセルでstopRecorder終了後にcancelCoseさせるための処置
+    isRecording: function (newVal, oldVal) {
+      if (!newVal && oldVal && this.cancelWait) {
+        this.$emit('cancelClose')
+      }
     }
   },
   methods: {
     submit () {
       this.finlize()
       console.log('VoiceRecorder submitted')
-      this.$emit('submitClose')
+      let result = {
+        text: this.result,
+        audio: this.audioBlob
+      }
+      this.$emit('submitClose', result)
     },
     cancel () {
       this.finlize()
       console.log('VoiceRecorder canceled')
-      this.$emit('cancelClose')
     },
     // ダミーリスナー
     nop () {
@@ -221,12 +230,20 @@ export default {
         console.log('fianlize @ wait listening')
         await stt.wsclose()
         this.isWaitListening = false
+        this.$emit('cancelClose')
       } else if (this.isRecording) {
         console.log('fianlize @ recording')
         await this.stopRec()
+        this.cancelWait = true
       } else if (this.isConverting) {
         console.log('fianlize @ converting')
         await this.stopConvert()
+        this.cancelWait = true
+      } else if (this.isPlaying) {
+        console.log('fianlize @ playing')
+        await this.stopPlay()
+      } else {
+        this.$emit('cancelClose')
       }
     },
     // ----------------
@@ -292,6 +309,7 @@ export default {
       this.isConverting = true
       this.isWaitListening = false
     },
+    // 再変換停止制御
     async stopConvert () {
       console.log('stopConvert')
       await stt.wsclose()
@@ -312,7 +330,7 @@ export default {
       this.isConverting = false
     },
     // ----------------
-    // 再生制御
+    // 再生開始
     startPlay () {
       console.log('startPlay')
       this.audio = document.createElement('audio')
@@ -322,6 +340,7 @@ export default {
       this.audio.play()
       this.isPlaying = true
     },
+    // 再生停止
     async stopPlay () {
       console.log('stopPlay')
       this.audio.pause()
@@ -334,7 +353,7 @@ export default {
       this.isPlaying = false
     },
     // ----------------
-    // レコーディング開始制御
+    // レコーディング開始
     async startRec () {
       if (this.connectStatus) {
         let openingMsg = {
@@ -369,7 +388,7 @@ export default {
         this.isWaitListening = false
       }
     },
-    // レコーディング停止制御
+    // レコーディング停止
     async stopRec () {
       if (this.isRecording) {
         if (this.connectStatus) {
@@ -394,9 +413,9 @@ export default {
         let track = this.mediaStream.getAudioTracks()
         track[0].stop()
         this.mediaStream = null
-        this.isRecording = false
         // wav file 作成
         this.createWavFile(this.concatChunks(), this.audioContext.sampleRate)
+        this.isRecording = false
       }
     },
     // ----------------

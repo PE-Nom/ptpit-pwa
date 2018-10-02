@@ -60,20 +60,20 @@
                     </b-form-select>
                   </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <b-container>
-                  <b-row>
-                    <div class="col-md-10">
-                      <label for="inputDueDate" class="control-label">期日</label>
-                    </div>
-                  </b-row>
-                  <b-row>
-                    <div class="col-md-10">
-                      <date-selector :format="dateFormat" :start="minDate" v-bind:default="due_date" :end="maxDate" @date-change="dueDate"></date-selector>
-                    </div>
-                  </b-row>
-                </b-container>
+                <div class="form-group">
+                  <div class="col-md-10">
+                    <b-row>
+                      <div class="col-md-10">
+                        <label for="inputDueDate" class="control-label">期日</label>
+                      </div>
+                    </b-row>
+                    <b-row>
+                      <div class="col-md-10">
+                        <date-selector :format="dateFormat" :start="minDate" v-bind:default="due_date" :end="maxDate" @date-change="dueDate"></date-selector>
+                      </div>
+                    </b-row>
+                  </div>
+                </div>
               </div>
               <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" class="p-1" role="tab">
@@ -284,6 +284,11 @@ export default {
 </script>
 
 <style scoped>
+  .col-md-10 {
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
   .control-label {
     float: left;
   }

@@ -284,6 +284,10 @@ export default {
 </script>
 
 <style scoped>
+  .container {
+    padding-left: 10px;
+    margin-left: 0;
+  }
   .col-md-10 {
     -ms-flex: 0 0 100%;
     flex: 0 0 100%;

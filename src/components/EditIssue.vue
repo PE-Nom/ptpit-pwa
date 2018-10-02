@@ -28,7 +28,7 @@
                         <label for="inputSubject" class="control-label">件名</label>
                       </b-col>
                       <b-col cols="2">
-                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('subject')"/></icon-base>
+                        <icon-base class="mic_enable" icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('subject')"/></icon-base>
                       </b-col>
                     </b-row>
                     <input type="text" class="form-control" id="inputSubject" placeholder="題名" v-model="subject">
@@ -57,7 +57,7 @@
                         <label for="inputDescription" class="control-label">指摘内容</label>
                       </b-col>
                       <b-col cols="2">
-                        <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('description')"/></icon-base>
+                        <icon-base class="mic_enable" icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('description')"/></icon-base>
                       </b-col>
                     </b-row>
                     <textarea class="form-control" rows="3" id="inputDescription" placeholder="指摘の記述" v-model="description"></textarea>
@@ -121,7 +121,7 @@
                                 <label for="inputNotaion" class="control-label">コメント</label>
                             </b-col>
                             <b-col cols="2">
-                              <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('notation')"/></icon-base>
+                              <icon-base class="mic_enable" icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('notation')"/></icon-base>
                             </b-col>
                           </b-row>
                           <textarea class="form-control" rows="3" id="inputNotation" v-model="notation"></textarea>
@@ -153,7 +153,7 @@
                             <label for="inputImageDescription" class="control-label">画像の説明</label>
                           </b-col>
                           <b-col cols="2">
-                            <icon-base icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('imageDescription')"/></icon-base>
+                            <icon-base class="mic_enable" icon-color="#0000ff" width=30 height=30 icon-name="mic"><icon-mic @iconClick="recording('imageDescription')"/></icon-base>
                           </b-col>
                         </b-row>
                         <textarea class="form-control" rows="3" id="inputImageDescription" placeholder="画像の説明記述" v-model="imageDescription"></textarea>
@@ -164,10 +164,8 @@
               </b-card>
               <!-- 更新・登録 -->
               <div class="button-group">
-                <div class="col-md-8">
-                  <p v-if=errorMessage class="message-field">{{errorMessage}}</p>
-                </div>
-                <div class="col-md-2">
+                <p v-if=errorMessage class="message-field">{{errorMessage}}</p>
+                <div class="control-button">
                   <b-button class="control-button create" variant="success" v-if="this.new" @click='createIssue'>新規登録</b-button>
                   <b-button class="control-button update" variant="success" v-else @click='updateIssue'>更新</b-button>
                 </div>
@@ -629,6 +627,7 @@ export default {
   }
   .control-button {
     float: right;
+    margin-right: 1em;
   }
   .row-top {
     margin-top: 0em;
@@ -671,8 +670,12 @@ export default {
     border-top:1px solid gray;
   }
   .mic_enable {
+    float: right;
+    margin-bottom: 1px;
+    /*
     position: absolute;
     right: 5%;
+    */
     /*
     top: 50%;
     left: 50%;

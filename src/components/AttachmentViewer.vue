@@ -18,20 +18,13 @@
 </template>
 
 <script>
+import URLjoin from 'url-join'
+import config from '../config.js'
 import editstate from '../models/editState.js'
 
 export default {
   data () {
     return {
-      // test_url: 'http://192.168.1.4/JS/data/', // @ office
-      // test_url: 'http://192.168.10.6/JS/data/', // @ home on let's note
-
-      test_url: 'https://192.168.1.4/data/', // @office on dell over https
-      // test_url: 'https://192.168.10.6/data/', // @home on dell over https
-
-      // test_url: 'https://www.nomtech-pwa.com/data/', // @AWS
-      // test_url: 'https://pitsan.nomtech-pwa.com/data/', // @AWS
-
       attachment: null,
       image_src: null
     }
@@ -41,16 +34,12 @@ export default {
       return this.attachment.content_type.indexOf('image') !== -1
     },
     contentUrlSrc () {
-      return this.test_url +
-              editstate.currentIssueId + '/' +
-              this.attachment.id + '_' +
-              this.attachment.filename
+      let url = URLjoin(config.BaseURL, '/data/', editstate.currentIssueId + '/', this.attachment.id + '_' + this.attachment.filename)
+      return url
     },
     contentUrlSrcset () {
-      return this.test_url +
-              editstate.currentIssueId + '/' +
-              this.attachment.id + '_' +
-              this.attachment.filename + ' 1x'
+      let url = URLjoin(config.BaseURL, '/data/', editstate.currentIssueId + '/', this.attachment.id + '_' + this.attachment.filename + ' 1x')
+      return url
     }
   },
   created () {

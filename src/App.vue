@@ -19,6 +19,7 @@
 <script>
 import _ from 'lodash'
 import router from './router'
+import config from './config.js'
 import naim from './models/naim.js'
 
 export default {
@@ -26,7 +27,7 @@ export default {
   data () {
     return {
       activeUser: false,
-      version: '1.01',
+      version: config.Versions,
       tablet: false
     }
   },

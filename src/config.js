@@ -22,4 +22,4 @@ exports.Password = 'mhims0821' // Pitsan password
 exports.WSUri = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=[TOKEN]&model=ja-JP_BroadbandModel&x-watson-learning-opt-out=1'
 
 // Pitsan Verions No.
-exports.Versions = '1.01'
+exports.Versions = '1.02'

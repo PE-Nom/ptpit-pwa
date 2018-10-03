@@ -1,24 +1,10 @@
 import axios from 'axios'
 import store from '../store.js'
+import config from '../config.js'
+import URLjoin from 'url-join'
 
 export default {
-  wsURI: 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=[TOKEN]&model=ja-JP_BroadbandModel&x-watson-learning-opt-out=1',
-  getTokenForm: {
-    method: 'GET',
-    uri: 'https://122.20.10.2:8081/token'
-    // uri: 'https://192.168.1.4:8081/token'
-    // uri: 'https://192.168.10.6:8081/token'
-    // uri: 'https://pitsan.nomtech-pwa.com/token'
-  },
-  message: {
-    'action': 'start',
-    'content-type': 'audio/l16;rate=16000',
-    'word_confidence': false,
-    'timestamps': true,
-    'interim_results': true,
-    'word_alternatives_threshold': 0.01,
-    'inactivity_timeout': 2
-  },
+  wsURI: config.WSUri,
   ws: null,
   connected: false,
   wssendcnt: 0,
@@ -27,12 +13,12 @@ export default {
   async wsopen (openingMsg) {
     let wsURI = null
     if (!this.TOKEN) {
-      await axios.get(this.getTokenForm.uri)
+      let url = URLjoin(config.UploadBaseURL, '/token')
+      await axios.get(url)
         .then((response, body) => {
           console.log('token get')
           console.log(response)
           this.TOKEN = response.data.token
-          // wsURI = this.wsURI.replace('[TOKEN]', response.data.token)
         })
         .catch(err => {
           console.log('err @ wsopen')
@@ -75,8 +61,6 @@ export default {
       this.ws.onopen = function (evt) {
         console.log('onopen event')
         console.log(evt)
-        // console.log(this.message)
-        // let msg = JSON.stringify(this.message)
         console.log(openingMsg)
         let msg = JSON.stringify(openingMsg)
         console.log(msg)

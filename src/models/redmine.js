@@ -1,14 +1,6 @@
 import axios from 'axios'
-
-// const BASE_URL = 'http://192.168.1.4:3001/' // @office
-// const BASE_URL = 'http://192.168.10.6:3001' // @home on let's note
-
-const BASE_URL = 'https://172.20.10.2/redmine' // @office on dell over https
-// const BASE_URL = 'https://192.168.1.4/redmine' // @office on dell over https
-// const BASE_URL = 'https://192.168.10.6/redmine' // @home on Let's-note over https
-
-// const BASE_URL = 'https://www.nomtech-pwa.com/redmine' // @AWS
-// const BASE_URL = 'https://pitsan.nomtech-pwa.com/redmine' // @AWS
+import URLjoin from 'url-join'
+import config from '../config.js'
 
 export default {
   rmc: null,
@@ -22,7 +14,7 @@ export default {
   configure () {
     if (!this.isConfigured()) {
       this.rmc = axios.create({
-        baseURL: BASE_URL,
+        baseURL: URLjoin(config.BaseURL, '/redmine'),
         auth: {
           username: this.user.username,
           password: this.user.password

@@ -26,8 +26,7 @@ export default {
       // test_url: 'http://192.168.1.4/JS/data/', // @ office
       // test_url: 'http://192.168.10.6/JS/data/', // @ home on let's note
 
-      test_url: 'https://172.20.10.2/data/', // @office on dell over https
-      // test_url: 'https://192.168.1.4/data/', // @office on dell over https
+      test_url: 'https://192.168.1.4/data/', // @office on dell over https
       // test_url: 'https://192.168.10.6/data/', // @home on dell over https
 
       // test_url: 'https://www.nomtech-pwa.com/data/', // @AWS

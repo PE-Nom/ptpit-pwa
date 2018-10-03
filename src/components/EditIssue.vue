@@ -226,7 +226,7 @@
       </b-card>
     </div>
     <VoiceRecorder v-if="isVoiceRecorderActive" @cancelClose="cancelClose" @submitClose="submitClose"></VoiceRecorder>
-    <Indicator v-if="updating" message="更新中です。少々お待ちください" color="#FFFFFF"></Indicator>
+    <Indicator v-if="updating || creating" message="更新中です。少々お待ちください" color="#FFFFFF"></Indicator>
   </div>
 </template>
 
@@ -479,12 +479,12 @@ export default {
           editstate.currentIssueId = ret.data.issue.id
           await this.uploadFile()
         }
+        this.creating = false
         if (this.$store.getters.connectStat) {
           router.push('/tickets')
         } else {
           router.push('/pendingrequests')
         }
-        this.creating = false
       }
     },
     updateIssue: async function () {

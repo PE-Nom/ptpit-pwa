@@ -226,6 +226,7 @@
       </b-card>
     </div>
     <VoiceRecorder v-if="isVoiceRecorderActive" @cancelClose="cancelClose" @submitClose="submitClose"></VoiceRecorder>
+    <Indicator v-if="updating" message="更新中です。少々お待ちください" color="#FFFFFF"></Indicator>
   </div>
 </template>
 
@@ -235,6 +236,7 @@ import naim from '../models/naim.js'
 import editstate from '../models/editState.js'
 import dateSelector from './DateSelector.vue'
 import VoiceRecorder from './VoiceRecorder.vue'
+import Indicator from './Indicator.vue'
 import fileUploader from '../models/fileUploader.js'
 import util from '../models/util.js'
 import IconBase from './IconBase.vue'
@@ -245,7 +247,8 @@ export default {
     IconBase,
     IconMic,
     dateSelector,
-    VoiceRecorder
+    VoiceRecorder,
+    Indicator
   },
   data () {
     return {
@@ -497,12 +500,12 @@ export default {
         if (this.mediaData !== null) {
           await this.uploadFile()
         }
+        this.updating = false
         if (this.$store.getters.connectStat) {
           router.push('/tickets')
         } else {
           router.push('/pendingrequests')
         }
-        this.updating = false
       }
     },
     previewAttachment: function (attachment) {

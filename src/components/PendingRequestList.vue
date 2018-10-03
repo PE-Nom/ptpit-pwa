@@ -65,6 +65,7 @@
         </div>
       </div>
     </div>
+    <Indicator v-if="uploading" message="更新中です。少々お待ちください" color="#FFFFFF"></Indicator>
 
   </div>
 </template>
@@ -75,12 +76,16 @@ import editstate from '../models/editState.js'
 import prm from '../models/pendingRequestManager.js'
 import naim from '../models/naim.js'
 import fileUploader from '../models/fileUploader.js'
+import Indicator from './Indicator.vue'
 import iconUpload from '../assets/upload.png'
 import iconNew from '../assets/new.png'
 import iconTrash from '../assets/trash.png'
 import iconConnection from '../assets/connection.png'
 
 export default {
+  components: {
+    Indicator
+  },
   data () {
     return {
       columns: ['key', 'request', 'id', 'subject', 'description'],

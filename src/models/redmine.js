@@ -6,10 +6,8 @@ export default {
   rmc: null,
   configured: false,
   user: {
-    username: 'mhims1',
-    password: 'mhims0821'
-    // username: 'patroler1',
-    // password: 'safety0918'
+    username: config.Username,
+    password: config.Password
   },
   configure () {
     if (!this.isConfigured()) {

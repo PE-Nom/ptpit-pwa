@@ -12,7 +12,8 @@ export default {
   configure () {
     if (!this.isConfigured()) {
       this.rmc = axios.create({
-        baseURL: URLjoin(config.BaseURL, '/redmine'),
+        // baseURL: URLjoin(config.BaseURL, '/redmine'),
+        baseURL: URLjoin('http://pitsan.nomtech-pwa.com', '/redmine'),
         auth: {
           username: this.user.username,
           password: this.user.password

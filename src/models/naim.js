@@ -255,15 +255,13 @@ export default {
       console.log('### retrieveIssues ###')
       if (store.getters.connectStat) {
         // Issues List
-        const iss = []
         this.issues = []
         console.log(' call redmine.issues')
         if (redmine.isConfigured()) {
           await redmine.issues(res => {
             console.log('==== Issues @ naim ====')
             res.data.issues.forEach(el => {
-              iss.push(el)
-              // console.log(element)
+              console.log(el)
               let assignedName = el.assigned_to ? el.assigned_to.name : ''
               let dueRatio = el.done_ratio ? el.done_ratio : '0'
               let dueDate = el.due_date ? el.due_date : '未定義'

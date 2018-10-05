@@ -32,13 +32,13 @@ export default {
   async users (callback) {
     await this.rmc.get('/users.json')
       .then(res => {
+        console.log(res)
         callback(res)
       })
       .catch(err => {
         throw err
       })
   },
-
   // ============
   // Custom Field
   // ============
@@ -57,6 +57,15 @@ export default {
   // ============
   async projects (params, callback) {
     await this.rmc.get('/projects.json', params)
+      .then(res => {
+        callback(res)
+      })
+      .catch(err => {
+        throw err
+      })
+  },
+  async membershipOfProject (id, callback) {
+    await this.rmc.get('/projects/' + id + '/memberships.json')
       .then(res => {
         callback(res)
       })

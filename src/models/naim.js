@@ -1,4 +1,5 @@
 import store from '../store.js'
+import config from '../config.js'
 import pendingRequestManager from './pendingRequestManager.js'
 import redmine from './redmine.js'
 import editstate from './editState.js'
@@ -18,6 +19,7 @@ export default {
   activities: null,
   documentCategories: null,
   online: true,
+  userId: null,
 
   initialize: async function (user) {
     console.log('initialize @ naim')
@@ -30,13 +32,14 @@ export default {
       alert(resp.data.dateandtime)
       store.commit('setConnectStat', {connectStat: true})
       // pendingRequestManager.clear()
+      await this.retrieveUsers()
       await this.retrievePojects()
+      await this.retrieveMembershipOfProjects()
       await this.retrieveCustomFields()
       await this.retrieveIssues()
       await this.retrieveTrackers()
       await this.retrieveIssueStatuses()
       await this.retrieveIssuePriorities()
-      await this.retrieveUsers()
       await this.retrieveTimeEntryActivities()
       await this.retrieveDocumentCategories()
     } catch (err) {
@@ -67,6 +70,7 @@ export default {
     try {
       await redmine.users(res => {
         console.log('==== Users @ naim ====')
+        this.userId = this.getUserId(res.data.users)
         this.users = util.convertUsersObjs(res.data.users)
         localStorage.removeItem('users')
         localStorage.setItem('users', JSON.stringify(this.users))
@@ -80,14 +84,26 @@ export default {
   getUsers: function () {
     return this.users
   },
-
+  getUserId: function (users) {
+    let id = null
+    console.log('getUserId : Username = ' + config.Username)
+    users.forEach(user => {
+      if (user.login === config.Username) {
+        console.log(user)
+        id = user.id
+      }
+    })
+    return id
+  },
   // ------------------
   // Projects data
   // ------------------
+  prjs: [],
   retrievePojects: async function () {
     try {
       // Project List
       const prjs = []
+      this.prjs = []
       if (redmine.isConfigured()) {
         await redmine.projects({}, res => {
           console.log('==== Retrieve Projects @ naim ====')
@@ -97,6 +113,7 @@ export default {
           })
         })
       }
+      this.prjs = prjs
       // ここで Project List を更新する。
       this.projects = util.convertOptionObjs(prjs, 'name')
       localStorage.removeItem('projects')
@@ -105,6 +122,34 @@ export default {
     } catch (err) {
       alert(err)
       throw err
+    }
+  },
+  availablePrjs: [],
+  retrieveMembershipOfProjects: async function () {
+    try {
+      for (let prj of this.prjs) {
+        await redmine.membershipOfProject(prj.id, res => {
+          console.log('==== Membership of project @ naim ====')
+          for (let membership of res.data.memberships) {
+            if (membership.user.id === this.userId) {
+              console.log('find userId')
+              let availablePrj = {
+                prjId: membership.project.id,
+                prjName: membership.project.name,
+                roleId: membership.roles[0].id,
+                roleName: membership.roles[0].name,
+                userId: membership.user.id,
+                userName: membership.user.name
+              }
+              this.availablePrjs.push(availablePrj)
+            }
+          }
+        })
+      }
+      console.log(this.availablePrjs)
+    } catch (err) {
+      console.log('==== Membership of project @ naim ====')
+      console.log(err)
     }
   },
   createProject: async function (qstr) {
